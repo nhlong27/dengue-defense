@@ -1,0 +1,50 @@
+import { signIn, signOut, useSession } from "next-auth/react";
+import Head from "next/head";
+import { api } from "@/utils/api";
+import { Button } from "@/client/components/ui/button";
+import { ModeToggle } from "@/client/components/ModeToggle";
+import { Text } from "@/client/components/ui/text";
+
+export default function Home() {
+  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
+
+  return (
+    <>
+      <Head>
+        <title>Dengue Defense</title>
+        <meta name="description" content="Bootstrapped with create-t3-app" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <main className="flex min-h-screen flex-col items-center justify-center ">
+        <Button value='default'>
+          <Text variant='default'>Hello</Text>
+        </Button>
+        <ModeToggle />
+      </main>
+    </>
+  );
+}
+
+function AuthShowcase() {
+  const { data: sessionData } = useSession();
+
+  const { data: secretMessage } = api.example.getSecretMessage.useQuery(
+    undefined, // no input
+    { enabled: sessionData?.user !== undefined }
+  );
+
+  return (
+    <div className="flex flex-col items-center justify-center gap-4">
+      <p className="text-center text-2xl text-white">
+        {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
+        {secretMessage && <span> - {secretMessage}</span>}
+      </p>
+      <button
+        className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+        onClick={sessionData ? () => void signOut() : () => void signIn()}
+      >
+        {sessionData ? "Sign out" : "Sign in"}
+      </button>
+    </div>
+  );
+}
