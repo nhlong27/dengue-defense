@@ -20,10 +20,7 @@ const AccountDrawer = dynamic(
 );
 
 const Auth = () => {
-  // const { data: secretMessage } = api.example.getSecretMessage.useQuery(
-  //   undefined, // no input
-  //   { enabled: sessionData?.user !== undefined }
-  // );
+
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
