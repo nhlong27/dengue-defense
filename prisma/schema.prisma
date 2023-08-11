@@ -14,15 +14,9 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-}
-
 enum UserRole {
-  ADMIN
-  USER
+    ADMIN
+    USER
 }
 
 // Necessary for Next auth
@@ -44,12 +38,24 @@ model Account {
     @@unique([provider, providerAccountId])
 }
 
+// model Device {
+//   id        Int     @id @default(autoincrement())
+//   title     String
+//   content   String?
+//   published Boolean @default(false)
+//   author    User?   @relation(fields: [authorId], references: [id])
+//   authorId  String?
+// }
+
 model Session {
     id           String   @id @default(cuid())
     sessionToken String   @unique
     userId       String
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    accessToken  String   @unique
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
 }
 
 model User {
@@ -57,10 +63,13 @@ model User {
     name          String?
     email         String?   @unique
     emailVerified DateTime?
+    password      String?
     image         String?
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
     accounts      Account[]
     sessions      Session[]
-    role UserRole @default(USER)
+    role          UserRole  @default(USER)
 }
 
 model VerificationToken {

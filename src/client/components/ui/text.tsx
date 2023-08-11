@@ -1,19 +1,16 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Slot } from "@radix-ui/react-slot";
-import { Balancer } from "react-wrap-balancer";
 import { cn } from "@/utils/utils";
 
 const textVariants = cva([], {
   variants: {
     variant: {
       default: "font-normal",
-      primary: "font-semibold text-primary dark:text-primary-dark",
-      accent: "font-normal text-accent dark:text-accent-dark",
-      destructive: "font-normal text-destructive dark:text-destructive-dark",
-      tertiary: "font-normal text-tertiary dark:text-tertiary-dark",
-      ghost: "font-normal text-ghost dark:text-ghost-dark",
-      link: "underline font-normal text-link dark:text-link-dark",
+      secondary: "font-semibold text-primary",
+      accent: "font-normal text-accent",
+      destructive: "font-normal text-destructive",
+      ghost: "font-normal text-muted",
     },
     size: {
       default: "text-base",
@@ -40,13 +37,11 @@ const Text = React.forwardRef<HTMLParagraphElement, TextProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "p";
     return (
-      <Balancer>
         <Comp
           className={cn(textVariants({ variant, size, className }))}
           ref={ref}
           {...props}
         />
-      </Balancer>
     );
   }
 );
