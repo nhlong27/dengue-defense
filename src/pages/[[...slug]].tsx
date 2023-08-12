@@ -11,7 +11,8 @@ import Sidebar from "@/client/components/layout/Sidebar";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import OAuthModal from "@/client/components/OAuthModal";
-import { Profile } from "@/client/features/user";
+import { Profile, Users } from "@/client/features/user";
+import { DeviceDetail, Devices } from "@/client/features/device";
 
 export default function Home() {
   const [id, setId] = React.useState<string>("");
@@ -25,8 +26,11 @@ export default function Home() {
   );
 
   const router = useRouter();
-  const {data:session} = useSession();
-  const {data} = api.user.checkIfOAuth.useQuery({email: session?.user?.email ?? ''}, {enabled: !!session?.user?.email});
+  const { data: session } = useSession();
+  const { data } = api.user.checkIfOAuth.useQuery(
+    { email: session?.user?.email ?? "" },
+    { enabled: !!session?.user?.email }
+  );
 
   return (
     <main className="mx-auto flex min-h-screen w-full min-w-[300px] max-w-[2000px] flex-col lg:flex-row">
@@ -97,21 +101,24 @@ export default function Home() {
       <Header />
       <Sidebar />
       <div className="flex min-h-screen flex-col lg:order-2 lg:grow ">
-        <div className="hidden h-16 w-full justify-between lg:flex shadow-sm items-center px-8">
-          <h1 className="text-lg font-semibold tracking-wide capitalize">
-            {router.query.slug?.[0] ? router.query.slug?.[0] : 'Dashboard'}
+        <div className="hidden h-16 w-full items-center justify-between px-8 shadow-sm lg:flex">
+          <h1 className="text-lg font-semibold capitalize tracking-wide">
+            {router.query.slug?.[0] ? router.query.slug?.[0] : "Dashboard"}
           </h1>
           <ModeToggle />
         </div>
-        <div className="flex flex-grow flex-col p-8">
+        <div className="flex flex-grow flex-col pl-8 py-8 pr-16">
           {(() => {
+            if (router.query.slug?.[1]) {
+              return <DeviceDetail id={router.query.slug?.[1]} />
+            } 
             switch (router.query.slug?.[0]) {
               case "profile":
                 return <Profile />;
+              case "users":
+                return <Users />;
               case "devices":
-                return <div>Devices</div>;
-              case "logs":
-                return <div>Logs</div>;
+                return <Devices />;
               default:
                 return <div>dfd</div>;
             }
@@ -126,7 +133,9 @@ export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   //@ts-ignore
-  const session = await getServerSession(...authOptionsWrapper(context.req, context.res));
+  const session = await getServerSession(
+    ...authOptionsWrapper(context.req, context.res)
+  );
 
   if (!session) {
     return {

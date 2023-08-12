@@ -74,6 +74,8 @@ const Nav = () => {
                 <User size={15} />
                 Profile
               </MenubarItem>
+              <MenubarSeparator />
+
               <MenubarItem>
                 <Link
                   href="https://github.com/nhlong27/dengue-defense"
@@ -138,6 +140,8 @@ const Nav = () => {
                 <User size={15} />
                 Profile
               </MenubarItem>
+              <MenubarSeparator />
+
               <MenubarItem>
                 <Link
                   href="https://github.com/nhlong27/dengue-defense"

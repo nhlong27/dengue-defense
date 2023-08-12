@@ -17,7 +17,8 @@ export const userRouter = createTRPCRouter({
       const user = await ctx.prisma.user.create({
         data: { ...input, password: hashPassword(input.password) },
       });
-      return user;
+      const {password , ...rest} = user;
+      return rest;
     }
   ),
   get: publicProcedure
@@ -28,13 +29,42 @@ export const userRouter = createTRPCRouter({
           email: input.email,
         },
       });
-      return user;
+      const {password , ...rest} = user;
+      return rest;
     }
   ),
   getAll: publicProcedure
     .query(async ({ ctx }) => {
       const users = await ctx.prisma.user.findMany();
-      return users;
+      const newUsers = users.map(user=>{
+        const {password , ...rest} = user;
+        return rest;
+      })
+      return newUsers
+    }
+  ),
+  getUnassigned: publicProcedure
+    .query(async ({ ctx }) => {
+      const users = await ctx.prisma.user.findMany({
+        where: {
+          role: 'USER',
+        }
+      });
+      const assignedDevices = await ctx.prisma.device.findMany({
+        where: {
+          patient: {
+            not: null,
+          }
+        }
+      });
+      const assignedUsers = assignedDevices.map(device=>device.patient);
+      const unassignedUsers = users.filter(user=>!assignedUsers.includes(user.id));
+      const newUsers = unassignedUsers.map(user=>{
+        const {password , ...rest} = user;
+        return rest;
+      }
+      )
+      return newUsers
     }
   ),
   remove: publicProcedure
@@ -45,7 +75,8 @@ export const userRouter = createTRPCRouter({
           id: input.userId,
         },
       });
-      return user;
+      const {password , ...rest} = user;
+      return rest;
     }
   ),
   checkIfOAuth: publicProcedure

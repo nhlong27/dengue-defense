@@ -126,7 +126,7 @@ export const deviceRouter = createTRPCRouter({
           active: false,
         },
       });
-      clearInterval(device.interval as number);
+      clearInterval(device.interval!);
     }),
   
   remove: publicProcedure
@@ -138,7 +138,7 @@ export const deviceRouter = createTRPCRouter({
         },
       });
       if (device?.active) {
-        clearInterval(device.interval as number);
+        clearInterval(device.interval!);
         const consumer = kafka.consumer({ groupId: input.deviceId});
         await consumer.disconnect();
         await admin.connect();
@@ -167,6 +167,33 @@ export const deviceRouter = createTRPCRouter({
     .query(async ({ ctx }) => {
       const devices = await ctx.prisma.device.findMany();
       return devices;
+    }
+  ),
+  create: publicProcedure
+    .input(z.object({ title: z.string(), patient: z.string().optional() }))
+    .mutation(async ({ input, ctx }) => {
+      console.log('working')
+      const device = await ctx.prisma.device.create({
+        data: {
+          title: input.title,
+          patient: input.patient,
+        },
+      });
+      return device;
+    }
+  ),
+  assign: publicProcedure
+    .input(z.object({ deviceId: z.string(), patientId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const device = await ctx.prisma.device.update({
+        where: {
+          id: Number(input.deviceId),
+        },
+        data: {
+          patient: input.patientId,
+        },
+      });
+      return device;
     }
   ),
 });

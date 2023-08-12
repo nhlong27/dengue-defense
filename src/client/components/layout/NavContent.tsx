@@ -22,15 +22,15 @@ const NavContent = () => {
         </Button>
         <Button
           onClick={() => {
-            void router.push("/patients");
+            void router.push("/users");
           }}
           variant="ghost"
           size="lg"
           className={`flex w-full items-center justify-start gap-3 ${
-            router.query.slug?.[0] === "patients" ? "bg-accent" : ""
+            router.query.slug?.[0] === "users" ? "bg-accent" : ""
           }`}
         >
-          <Users size={20} /> Patients
+          <Users size={20} /> Users
         </Button>
         <Button
           onClick={() => {
