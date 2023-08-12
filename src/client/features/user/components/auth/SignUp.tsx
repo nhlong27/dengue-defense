@@ -26,6 +26,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "@/client/components/ui/use-toast";
 import { RotatingLines } from "react-loader-spinner";
+import { useRouter } from "next/router";
 
 const signUpSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -52,6 +53,7 @@ const SignUp = () => {
       role: "USER",
     },
   });
+  const router = useRouter()
 
   const onSubmit = (data: z.infer<typeof signUpSchema>) => {
     setIsSubmitting(true);
@@ -76,8 +78,8 @@ const SignUp = () => {
             ),
           });
 
-          console.log(response);
 
+          void router.push('/')
           setIsSubmitting(false);
         },
         onError: (error) => {

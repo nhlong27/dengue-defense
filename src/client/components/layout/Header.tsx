@@ -14,7 +14,6 @@ import { Skeleton } from "../ui/skeleton";
 const Nav = dynamic(() => import("./Nav"), {
   loading: () => (
     <><nav className="mx-auto hidden h-full w-full lg:flex">
-      
         <Menubar>
           <MenubarMenu>
             <MenubarTrigger>

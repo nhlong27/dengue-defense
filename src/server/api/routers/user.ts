@@ -4,6 +4,7 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import sha256 from "crypto-js/sha256";
+import { omit } from "lodash";
 
 const hashPassword = (password: string) => {
   return sha256(password).toString()
@@ -47,5 +48,36 @@ export const userRouter = createTRPCRouter({
       return user;
     }
   ),
-
+  checkIfOAuth: publicProcedure
+    .input(z.object({ email: z.string().email() }))
+    .query(async ({ input, ctx }) => {
+      const user = await ctx.prisma.user.findFirst({
+        where: {
+          email: input.email,
+        },
+      });
+      if (user?.password){
+        return null;
+      }
+      else {
+        const {password , ...rest} = user;
+        return rest;
+      };
+    }
+  ),
+  updateRole: publicProcedure
+    .input(z.object({ email: z.string().email(), role: z.enum(['USER', 'ADMIN']) }))
+    .mutation(async ({ input, ctx }) => {
+      const user = await ctx.prisma.user.update({
+        where: {
+          email: input.email,
+        },
+        data: {
+          role: input.role,
+          password: input.role
+        },
+      });
+      return user;
+    }
+  ),
 });

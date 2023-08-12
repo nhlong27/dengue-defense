@@ -9,6 +9,8 @@ import { authOptionsWrapper } from "./api/auth/[...nextauth]";
 import Header from "@/client/components/layout/Header";
 import Sidebar from "@/client/components/layout/Sidebar";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
+import OAuthModal from "@/client/components/OAuthModal";
 
 export default function Home() {
   const [id, setId] = React.useState<string>("");
@@ -22,10 +24,12 @@ export default function Home() {
   );
 
   const router = useRouter();
-
+  const {data:session} = useSession();
+  const {data} = api.user.checkIfOAuth.useQuery({email: session?.user?.email ?? ''}, {enabled: !!session?.user?.email});
 
   return (
     <main className="mx-auto flex min-h-screen w-full min-w-[300px] max-w-[2000px] flex-col lg:flex-row">
+      {data && <OAuthModal isOAuthUser={data} />}
       {/* <div className="p-8">
         {getAll.data?.map((device) => (
           <div key={device.id}>
@@ -119,9 +123,7 @@ export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   //@ts-ignore
-  const session = await getServerSession(
-    ...authOptionsWrapper(context.req, context.res)
-  );
+  const session = await getServerSession(...authOptionsWrapper(context.req, context.res));
 
   if (!session) {
     return {
