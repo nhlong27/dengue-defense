@@ -18,7 +18,7 @@ import {
 } from "@/client/components/ui/sheet";
 import { Github, Linkedin, LogOut, Menu, User } from "lucide-react";
 import { ModeToggle } from "../ModeToggle";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import {
   Avatar,
   AvatarFallback,
@@ -28,9 +28,11 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import { toast } from "../ui/use-toast";
 import { useRouter } from "next/router";
+import NavContent from "./NavContent";
 
 const Nav = () => {
   const router = useRouter();
+  const { data: session } = useSession();
   return (
     <>
       <nav className="mx-auto flex h-full w-11/12 items-center lg:hidden">
@@ -40,12 +42,14 @@ const Nav = () => {
           </SheetTrigger>
           <SheetContent side="left" className="w-[18rem]">
             <SheetHeader>
-              <SheetTitle>Are you sure absolutely sure?</SheetTitle>
-              <SheetDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
-              </SheetDescription>
+              <SheetTitle className="h-20">
+                <div className="relative flex h-full w-20 items-center justify-center ">
+                  {/* <Image /> */}
+                  Logo
+                </div>
+              </SheetTitle>
             </SheetHeader>
+            <NavContent />
           </SheetContent>
         </Sheet>
         <div className="relative flex h-full w-20 items-center justify-center">
@@ -53,16 +57,20 @@ const Nav = () => {
           Logo
         </div>
         <ModeToggle />
-        <Menubar className="ml-auto mr-4 rounded-full p-0">
+        <Menubar className="ml-auto mr-4 rounded-full  border-0 p-0">
           <MenubarMenu>
-            <MenubarTrigger className="rounded-full p-0">
+            <MenubarTrigger className="flex  w-full gap-3 rounded-full py-0 pl-4 pr-0">
+              {session?.user?.name ?? session?.user?.email}
               <Avatar>
                 <AvatarImage src="https://github.com/shadcn.png" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
             </MenubarTrigger>
             <MenubarContent className="mr-12">
-              <MenubarItem className="flex gap-3">
+              <MenubarItem
+                className="flex gap-3"
+                onClick={() => void router.push("/profile")}
+              >
                 <User size={15} />
                 Profile
               </MenubarItem>
@@ -88,11 +96,12 @@ const Nav = () => {
                 </Link>
               </MenubarItem>
               <MenubarSeparator />
-              <MenubarItem className="flex gap-3">
+              <MenubarItem className="flex gap-2">
                 <LogOut size={15} />
                 <Button
                   variant="ghost"
                   size="sm"
+                  className="px-0 font-normal"
                   onClick={() => {
                     signOut()
                       .then((res) => console.log(res))
@@ -107,20 +116,25 @@ const Nav = () => {
         </Menubar>
       </nav>
       <nav className="hidden h-full w-full lg:flex lg:flex-col">
-        <div className="relative flex h-16 w-full items-center justify-center">
+        <div className="relative flex h-20 w-full items-center justify-start">
           {/* <Image /> */}
           Logo
         </div>
-        <Menubar className="mt-auto">
+        <NavContent />
+        <Menubar className="mb-16 mr-auto mt-auto w-full rounded-full border-0 p-0">
           <MenubarMenu>
-            <MenubarTrigger className="rounded-full p-0">
+            <MenubarTrigger className="flex w-full gap-3 rounded-full py-0 pl-0">
               <Avatar>
                 <AvatarImage src="https://github.com/shadcn.png" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
+              {session?.user?.name ?? session?.user?.email}
             </MenubarTrigger>
             <MenubarContent className="mr-12">
-              <MenubarItem className="flex gap-3">
+              <MenubarItem
+                className="flex gap-3"
+                onClick={() => void router.push("/profile")}
+              >
                 <User size={15} />
                 Profile
               </MenubarItem>
@@ -146,11 +160,12 @@ const Nav = () => {
                 </Link>
               </MenubarItem>
               <MenubarSeparator />
-              <MenubarItem className="flex gap-3">
+              <MenubarItem className="flex gap-2">
                 <LogOut size={15} />
                 <Button
                   variant="ghost"
                   size="sm"
+                  className="px-0 font-normal"
                   onClick={() => {
                     signOut()
                       .then(() => {

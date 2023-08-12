@@ -2,18 +2,15 @@ import React from "react";
 import dynamic from "next/dynamic";
 import {
   Menubar,
-  MenubarContent,
-  MenubarItem,
   MenubarMenu,
-  MenubarSeparator,
-  MenubarShortcut,
   MenubarTrigger,
 } from "@/client/components/ui/menubar";
 import { Skeleton } from "../ui/skeleton";
 
 const Nav = dynamic(() => import("./Nav"), {
   loading: () => (
-    <><nav className="mx-auto hidden h-full w-full lg:flex">
+    <>
+      <nav className="mx-auto hidden h-full w-full lg:flex">
         <Menubar>
           <MenubarMenu>
             <MenubarTrigger>
@@ -41,7 +38,7 @@ const Nav = dynamic(() => import("./Nav"), {
 
 export default function Header() {
   return (
-    <div className="sticky top-0 z-20 lg:hidden w-full bg-white dark:bg-black md:h-16 h-12">
+    <div className="sticky top-0 z-20 h-12 w-full  bg-white shadow-sm dark:bg-black md:h-16 lg:hidden">
       <Nav />
     </div>
   );

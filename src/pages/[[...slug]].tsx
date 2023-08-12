@@ -11,6 +11,7 @@ import Sidebar from "@/client/components/layout/Sidebar";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import OAuthModal from "@/client/components/OAuthModal";
+import { Profile } from "@/client/features/user";
 
 export default function Home() {
   const [id, setId] = React.useState<string>("");
@@ -95,16 +96,18 @@ export default function Home() {
       </button> */}
       <Header />
       <Sidebar />
-      <div className="flex min-h-screen flex-col lg:order-2 lg:grow">
-        <div className="hidden h-16 w-full justify-between lg:flex">
-          Dashboard
+      <div className="flex min-h-screen flex-col lg:order-2 lg:grow ">
+        <div className="hidden h-16 w-full justify-between lg:flex shadow-sm items-center px-8">
+          <h1 className="text-lg font-semibold tracking-wide capitalize">
+            {router.query.slug?.[0] ? router.query.slug?.[0] : 'Dashboard'}
+          </h1>
           <ModeToggle />
         </div>
-        <div className="flex flex-grow flex-col ">
+        <div className="flex flex-grow flex-col p-8">
           {(() => {
             switch (router.query.slug?.[0]) {
               case "profile":
-                return <div>Profile</div>;
+                return <Profile />;
               case "devices":
                 return <div>Devices</div>;
               case "logs":

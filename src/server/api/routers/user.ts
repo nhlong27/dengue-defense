@@ -21,11 +21,11 @@ export const userRouter = createTRPCRouter({
     }
   ),
   get: publicProcedure
-    .input(z.object({ userId: z.string() }))
+    .input(z.object({ email: z.string().email() }))
     .query(async ({ input, ctx }) => {
       const user = await ctx.prisma.user.findFirst({
         where: {
-          id: input.userId,
+          email: input.email,
         },
       });
       return user;
