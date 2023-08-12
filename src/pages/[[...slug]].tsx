@@ -1,29 +1,32 @@
 import { Button } from "@/client/components/ui/button";
 import { ModeToggle } from "@/client/components/ModeToggle";
 import { Text } from "@/client/components/ui/text";
-import { authOptions } from "@/server/auth";
-import { signOut } from "next-auth/react";
-import { type Session, getServerSession } from "next-auth";
+import { getServerSession } from "next-auth";
 import { type GetServerSidePropsContext } from "next";
 import { api } from "@/utils/api";
-import React from 'react';
+import React from "react";
+import { authOptionsWrapper } from "./api/auth/[...nextauth]";
+import Header from "@/client/components/layout/Header";
+import Sidebar from "@/client/components/layout/Sidebar";
+import { useRouter } from "next/router";
 
-export default function Home({ session }: { session: Session }) {
-  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
-  // const { data: secretMessage } = api.example.getSecretMessage.useQuery(
-  //   undefined, // no input
-  //   { enabled: sessionData?.user !== undefined }
-  // );
-  const [id, setId] = React.useState<string>("")
+export default function Home() {
+  const [id, setId] = React.useState<string>("");
   const getAll = api.device.getAll.useQuery();
   const start = api.device.start.useMutation();
   const pause = api.device.pause.useMutation();
   const remove = api.device.remove.useMutation();
-  const getByDevice = api.log.getByDevice.useQuery({ deviceId: id }, { enabled: !!id } );
+  const getByDevice = api.log.getByDevice.useQuery(
+    { deviceId: id },
+    { enabled: !!id }
+  );
+
+  const router = useRouter();
+
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center ">
-      <div className="p-8">
+    <main className="mx-auto flex min-h-screen w-full min-w-[300px] max-w-[2000px] flex-col lg:flex-row">
+      {/* <div className="p-8">
         {getAll.data?.map((device) => (
           <div key={device.id}>
             <Text>id {device.id}</Text>
@@ -75,7 +78,7 @@ export default function Home({ session }: { session: Session }) {
         ))}
       </div>
 
-      <ModeToggle />
+      
 
       <button
         onClick={() => {
@@ -85,28 +88,53 @@ export default function Home({ session }: { session: Session }) {
         }}
       >
         Sign out
-      </button>
+      </button> */}
+      <Header />
+      <Sidebar />
+      <div className="flex min-h-screen flex-col lg:order-2 lg:grow">
+        <div className="hidden h-16 w-full justify-between lg:flex">
+          Dashboard
+          <ModeToggle />
+        </div>
+        <div className="flex flex-grow flex-col ">
+          {(() => {
+            switch (router.query.slug?.[0]) {
+              case "profile":
+                return <div>Profile</div>;
+              case "devices":
+                return <div>Devices</div>;
+              case "logs":
+                return <div>Logs</div>;
+              default:
+                return <div>dfd</div>;
+            }
+          })()}
+        </div>
+      </div>
     </main>
   );
 }
 
-// export const getServerSideProps = async (
-//   context: GetServerSidePropsContext
-// ) => {
-//   const session = await getServerSession(context.req, context.res, authOptions);
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  //@ts-ignore
+  const session = await getServerSession(
+    ...authOptionsWrapper(context.req, context.res)
+  );
 
-//   if (!session) {
-//     return {
-//       redirect: {
-//         destination: "/auth",
-//         permanent: false,
-//       },
-//     };
-//   }
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/auth",
+        permanent: false,
+      },
+    };
+  }
 
-//   return {
-//     props: {
-//       session,
-//     },
-//   };
-// };
+  return {
+    props: {
+      session,
+    },
+  };
+};

@@ -10,6 +10,9 @@ import {
 import { SignIn, SignInWithProviders, SignUp } from "@/client/features/user";
 import { Separator } from "@/client/components/ui/separator";
 import dynamic from "next/dynamic";
+import { getServerSession } from "next-auth";
+import { authOptionsWrapper } from "./api/auth/[...nextauth]";
+import { type GetServerSidePropsContext } from "next";
 
 const AccountDrawer = dynamic(
   () => import("@/client/features/user/components/auth/AccountDrawer"),
@@ -20,8 +23,6 @@ const AccountDrawer = dynamic(
 );
 
 const Auth = () => {
-
-
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
       <div className="relative -z-10 min-h-screen w-full">
@@ -56,3 +57,26 @@ const Auth = () => {
 };
 
 export default Auth;
+
+
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  //@ts-ignore
+  const session = await getServerSession(...authOptionsWrapper(context.req, context.res) );
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      session,
+    },
+  };
+};

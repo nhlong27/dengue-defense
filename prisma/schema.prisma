@@ -68,7 +68,6 @@ model Session {
     userId       String
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    accessToken  String   @unique
     createdAt    DateTime @default(now())
     updatedAt    DateTime @updatedAt
 }
