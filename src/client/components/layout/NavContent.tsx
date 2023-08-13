@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { api } from "@/utils/api";
 import { useGetCurrentUserQuery } from "@/client/features/user";
+import { ScrollArea } from "../ui/scroll-area";
 
 const NavContent = () => {
   const router = useRouter();
@@ -109,22 +110,23 @@ const NavContent = () => {
             >
               Add patient
             </Button>
-
-            {patientsOfGroup.data?.map((patient) => (
-              <Button
-                key={patient.id}
-                onClick={() => {
-                  void router.push(`/profile?id=${patient.id}`);
-                }}
-                variant="ghost"
-                size="lg"
-                className={`flex w-full items-center justify-start gap-3 ${
-                  router.query.slug?.[0] === "group" ? "bg-accent" : ""
-                }`}
-              >
-                <UserSquare2 size={20} /> {patient.email}
-              </Button>
-            ))}
+            <ScrollArea className="h-[10rem]">
+              {patientsOfGroup.data?.map((patient) => (
+                <Button
+                  key={patient.id}
+                  onClick={() => {
+                    void router.push(`/profile?id=${patient.id}`);
+                  }}
+                  variant="ghost"
+                  size="lg"
+                  className={`flex w-full items-center justify-start gap-3 ${
+                    router.query.slug?.[0] === "group" ? "bg-accent" : ""
+                  }`}
+                >
+                  <UserSquare2 size={20} /> {patient.email}
+                </Button>
+              ))}
+            </ScrollArea>
           </>
         ) : (
           <div className="flex gap-4 px-8">
@@ -137,17 +139,17 @@ const NavContent = () => {
       </div>
       {user.data?.role === "USER" && (
         <div className="mt-4 flex flex-col gap-4">
-          <div className="flex w-full justify-between rounded-lg border px-6 py-3 text-sm text-orange-500 dark:text-orange-300 items-center">
+          <div className="flex w-full items-center justify-between rounded-lg border px-6 py-3 text-sm text-orange-500 dark:text-orange-300">
             Temperature
-            <span className="text-base">{log.data?.temp ?? 'N/A'}</span>
+            <span className="text-base">{log.data?.temp ?? "N/A"}</span>
           </div>
-          <div className="flex w-full rounded-lg border px-6 py-3 text-sm text-green-500 dark:text-green-300 justify-between items-center">
+          <div className="flex w-full items-center justify-between rounded-lg border px-6 py-3 text-sm text-green-500 dark:text-green-300">
             SpO2
-            <span className="text-base ">{log.data?.spo2 ?? 'N/A'}</span>
+            <span className="text-base ">{log.data?.spo2 ?? "N/A"}</span>
           </div>
-          <div className="flex w-full rounded-lg border px-6 py-3 text-sm text-purple-500 dark:text-purple-300 justify-between items-center">
+          <div className="flex w-full items-center justify-between rounded-lg border px-6 py-3 text-sm text-purple-500 dark:text-purple-300">
             Heart Pressure
-            <span className="text-base ">{log.data?.HP ?? 'N/A'}</span>
+            <span className="text-base ">{log.data?.HP ?? "N/A"}</span>
           </div>
         </div>
       )}
