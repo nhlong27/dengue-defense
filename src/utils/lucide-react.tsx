@@ -105,6 +105,28 @@ export const Sun = ({
     <path d="m19.07 4.93-1.41 1.41" />
   </svg>
 );
+export const Paperclip = ({
+  size,
+  className,
+}: {
+  size?: number;
+  className?: string;
+}) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size ?? 20}
+    height={size ?? 20}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={`lucide lucide-paperclip ${className}`}
+  >
+    <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+  </svg>
+);
 
 export const Accessibility = ({ size }: { size?: number }) => (
   <svg
@@ -330,7 +352,13 @@ export const Users = ({ size }: { size?: number }) => (
   </svg>
 );
 
-export const Search = ({ size }: { size?: number }) => (
+export const Search = ({
+  size,
+  className,
+}: {
+  size?: number;
+  className?: string;
+}) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size ?? 20}
@@ -341,7 +369,7 @@ export const Search = ({ size }: { size?: number }) => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="lucide lucide-search"
+    className={`lucide lucide-search ${className}`}
   >
     <circle cx="11" cy="11" r="8" />
     <path d="m21 21-4.3-4.3" />
@@ -567,22 +595,6 @@ export const AlertTriangle = ({ size }: { size?: number }) => (
     <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
     <path d="M12 9v4" />
     <path d="M12 17h.01" />
-  </svg>
-);
-export const Paperclip = ({ size }: { size?: number }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={size ?? 20}
-    height={size ?? 20}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="lucide lucide-paperclip"
-  >
-    <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />
   </svg>
 );
 

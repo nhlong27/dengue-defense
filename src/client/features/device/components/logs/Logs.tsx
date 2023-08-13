@@ -48,7 +48,7 @@ export const columns: ColumnDef<Device>[] = [
             className="px-0"
           >
             Log ID
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown />
           </Button>
         </div>
       );
@@ -67,7 +67,7 @@ export const columns: ColumnDef<Device>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Logged at
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown />
         </Button>
       );
     },
@@ -75,7 +75,7 @@ export const columns: ColumnDef<Device>[] = [
       const logged_at: string = row.getValue("logged_at");
       return (
         <div className="text-center font-medium">
-          {(new Date(logged_at)).toLocaleString()}
+          {new Date(logged_at).toLocaleString()}
         </div>
       );
     },
@@ -114,8 +114,8 @@ export const columns: ColumnDef<Device>[] = [
   },
 ];
 
-export default function Logs({deviceId = null} : {deviceId: string | null}) {
-  const { data } = api.log.getByDevice.useQuery({ deviceId: deviceId })
+export default function Logs({ deviceId = null }: { deviceId: string | null }) {
+  const { data } = api.log.getByDevice.useQuery({ deviceId: deviceId });
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [shouldRefresh, setShouldRefresh] = React.useState(false);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -145,23 +145,24 @@ export default function Logs({deviceId = null} : {deviceId: string | null}) {
         <Input
           placeholder="Filter by log ID..."
           value={(table.getColumn("id")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>{
-            table.getColumn("id")?.setFilterValue(event.target.value)}
-          }
+          onChange={(event) => {
+            table.getColumn("id")?.setFilterValue(event.target.value);
+          }}
           className="max-w-sm"
         />
         <Button variant="secondary" className="ml-8">
           {shouldRefresh ? (
             <RotatingLines strokeColor="#422006" strokeWidth="5" width="20" />
           ) : (
-            <RotateCcw
-              size={20}
+            <div
               onClick={() => {
                 setShouldRefresh((prev) => !prev);
                 setTimeout(() => setShouldRefresh((prev) => !prev), 1000);
                 void queryClient.invalidateQueries(deviceGetAllKey);
               }}
-            />
+            >
+              <RotateCcw size={20} />
+            </div>
           )}
         </Button>
       </div>

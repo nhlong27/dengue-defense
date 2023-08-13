@@ -40,7 +40,7 @@ const Cards = () => {
               <CardTitle className="text-sm font-medium">
                 Total patients
               </CardTitle>
-              <Accessibility className="h-5 w-5 text-muted-foreground" />
+              <Accessibility />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -61,7 +61,7 @@ const Cards = () => {
           <Card className="cursor-pointer bg-gradient-to-tr from-transparent to-primary/10 transition-all duration-300 hover:scale-105">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Doctors</CardTitle>
-              <Stethoscope className="h-5 w-5 text-muted-foreground" />
+              <Stethoscope />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -89,7 +89,7 @@ const Cards = () => {
           <Card className="cursor-pointer bg-gradient-to-tr from-transparent to-primary/10 transition-all duration-300 hover:scale-105">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Devices</CardTitle>
-              <MonitorSmartphone className="h-5 w-5 text-muted-foreground" />
+              <MonitorSmartphone />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -111,7 +111,7 @@ const Cards = () => {
                 <CardTitle className="text-sm font-medium">
                   Groups created
                 </CardTitle>
-                <Ungroup className="h-5 w-5 text-muted-foreground" />
+                <Ungroup />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
