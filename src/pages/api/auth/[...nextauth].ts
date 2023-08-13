@@ -37,7 +37,7 @@ export const authOptionsWrapper = (req: NextApiRequest, res: NextApiResponse) =>
           const { email, password } = credentials;
 
           try {
-            if (!isEmail(email)) {
+            if (!isEmail(email as string)) {
               throw new Error("Email should be a valid email address");
             }
 
@@ -58,7 +58,7 @@ export const authOptionsWrapper = (req: NextApiRequest, res: NextApiResponse) =>
             // }
 
             const passwordsMatch = await bcrypt.compare(
-              password,
+              password as string,
               user.password!
             );
 
@@ -134,7 +134,7 @@ export const authOptionsWrapper = (req: NextApiRequest, res: NextApiResponse) =>
           const cookies = new Cookies(req, res);
           const cookie = cookies.get("next-auth.session-token");
 
-          if (cookie) return cookie as string;
+          if (cookie) return cookie;
           return "";
         }
 
@@ -176,5 +176,5 @@ export const authOptionsWrapper = (req: NextApiRequest, res: NextApiResponse) =>
 ];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  return NextAuth(...authOptionsWrapper(req, res));
+  return NextAuth(...authOptionsWrapper(req, res))
 }

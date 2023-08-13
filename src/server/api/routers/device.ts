@@ -1,4 +1,4 @@
-import {Consumer, Kafka} from "kafkajs"
+import { type Consumer, Kafka} from "kafkajs"
 import { env } from "@/env.mjs";
 import { z } from "zod";
 import {
@@ -6,9 +6,9 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import { publishTelemetry } from "@/utils/emulator";
-import { Session } from "next-auth";
-import { Prisma, PrismaClient } from "@prisma/client";
-import { DefaultArgs } from "@prisma/client/runtime/library";
+import type { Session } from "next-auth";
+import type { Prisma, PrismaClient } from "@prisma/client";
+import type { DefaultArgs } from "@prisma/client/runtime/library";
 
 const partitions = 1;
 const replicationFactor = 1;
