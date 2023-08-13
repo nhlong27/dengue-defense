@@ -1,11 +1,8 @@
 import React from "react";
 import { Drawer } from "vaul";
 import { AlertTriangle } from "lucide-react";
-import { Button } from "@/client/components/ui/button";
 import { Text } from "@/client/components/ui/text";
-import { ScrollArea } from "@/client/components/ui/scroll-area";
 import { Separator } from "@/client/components/ui/separator";
-import { api } from "@/utils/api";
 
 const AccountDrawer = () => {
   return (

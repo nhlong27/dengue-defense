@@ -10,10 +10,3 @@ const LoadingPage = () => {
 };
 
 export default LoadingPage;
-
-{/* <Button type="submit" disabled={isSubmitting} className="flex gap-2">
-  Sign in
-  {isSubmitting && (
-    <RotatingLines strokeColor="#422006" strokeWidth="5" width="20" />
-  )}
-</Button>; */}

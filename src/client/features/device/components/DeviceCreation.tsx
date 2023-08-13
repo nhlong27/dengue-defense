@@ -14,7 +14,6 @@ import { z } from "zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -48,7 +47,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/client/components/ui/command";
-import { User } from "@prisma/client";
+import { type User } from "@prisma/client";
 
 const addDeviceSchema = z.object({
   title: z.string().min(2, { message: "Title must be at least 2 characters." }),

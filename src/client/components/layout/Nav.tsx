@@ -5,13 +5,11 @@ import {
   MenubarItem,
   MenubarMenu,
   MenubarSeparator,
-  MenubarShortcut,
   MenubarTrigger,
 } from "@/client/components/ui/menubar";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -22,10 +20,9 @@ import {
   LogOut,
   Menu,
   User,
-  UserCircle2,
 } from "lucide-react";
 import { ModeToggle } from "../ModeToggle";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import {
   Avatar,
   AvatarFallback,

@@ -1,7 +1,7 @@
-import NextAuth from "next-auth";
+import NextAuth, { type AuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { decode, encode } from "next-auth/jwt";
+import { type JWT, decode, encode } from "next-auth/jwt";
 import isEmail from "validator/lib/isEmail";
 import bcrypt from "bcrypt";
 import Cookies from "cookies";
@@ -9,9 +9,10 @@ import { randomUUID } from "crypto";
 import { Prisma } from "@prisma/client";
 import GoogleProvider from 'next-auth/providers/google';
 import { prisma } from "@/server/db";
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { env } from "@/env.mjs";
 import { SHA256 } from "crypto-js";
+
 
 export const authOptionsWrapper = (req: NextApiRequest, res: NextApiResponse) => [
   req,
@@ -34,10 +35,13 @@ export const authOptionsWrapper = (req: NextApiRequest, res: NextApiResponse) =>
           password: { label: "Password", type: "password" },
         },
         authorize: async (credentials) => {
-          const { email, password } = credentials;
+          const {email, password} = credentials as {
+            email: string;
+            password: string;
+          };
 
           try {
-            if (!isEmail(email as string)) {
+            if (!isEmail(email)) {
               throw new Error("Email should be a valid email address");
             }
 
@@ -58,11 +62,11 @@ export const authOptionsWrapper = (req: NextApiRequest, res: NextApiResponse) =>
             // }
 
             const passwordsMatch = await bcrypt.compare(
-              password as string,
+              password,
               user.password!
             );
 
-            if (!(user.password == SHA256(password as string).toString())) {
+            if (!(user.password == SHA256(password).toString())) {
               throw new Error("Password is not correct");
             }
 
@@ -73,7 +77,13 @@ export const authOptionsWrapper = (req: NextApiRequest, res: NextApiResponse) =>
               image: user.image,
             };
           } catch (error) {
-            console.error(error.message);
+            if (error instanceof Error) {
+              // 'error' is now known to be of type 'Error'
+              console.error(error.message);
+            } else {
+              // Handle other types of errors or unknown errors
+              console.error('An unknown error occurred');
+            }
 
             if (
               error instanceof Prisma.PrismaClientInitializationError ||
@@ -90,7 +100,7 @@ export const authOptionsWrapper = (req: NextApiRequest, res: NextApiResponse) =>
       }),
     ],
     callbacks: {
-      async signIn({ user }) {
+      async signIn({ user } : {user: {id: string, email: string, name: string, image: string}}) {
         console.log({user})
         if (
           req.query.nextauth?.includes("callback") &&
@@ -125,7 +135,7 @@ export const authOptionsWrapper = (req: NextApiRequest, res: NextApiResponse) =>
     secret: process.env.AUTH_SECRET,
     jwt: {
       maxAge: 60 * 60 * 24 * 30, 
-      encode: async ({ token, secret, maxAge }) => {
+      encode: async ({ token, secret, maxAge }: {token: JWT; secret: string; maxAge: number}) => {
         if (
           req.query.nextauth?.includes("callback") &&
           req.query.nextauth.includes("credentials") &&
@@ -140,7 +150,7 @@ export const authOptionsWrapper = (req: NextApiRequest, res: NextApiResponse) =>
 
         return encode({ token, secret, maxAge });
       },
-      decode: async ({ token, secret }) => {
+      decode: async ({ token, secret }: {token: string; secret: string }) => {
         if (
           req.query.nextauth?.includes("callback") &&
           req.query.nextauth.includes("credentials") &&
@@ -154,7 +164,7 @@ export const authOptionsWrapper = (req: NextApiRequest, res: NextApiResponse) =>
     adapter: PrismaAdapter(prisma),
     debug: process.env.NODE_ENV === "development",
     events: {
-      async signOut({ session }) {
+      async signOut({ session } : {session: {sessionToken: string}} ) {
         const { sessionToken } = session;
 
         const data = await prisma.session.findUnique({
@@ -176,5 +186,6 @@ export const authOptionsWrapper = (req: NextApiRequest, res: NextApiResponse) =>
 ];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  return NextAuth(...authOptionsWrapper(req, res))
+  const options: [NextApiRequest, NextApiResponse, AuthOptions] = authOptionsWrapper(req, res) as [NextApiRequest, NextApiResponse, AuthOptions];
+  return NextAuth(...options)
 }

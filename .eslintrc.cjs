@@ -20,7 +20,7 @@ const config = {
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-unsafe-return": "off",
     "@typescript-eslint/no-empty-interface": "off",
-
+    "@typescript-eslint/no-misused-promises": "off",
     "@typescript-eslint/consistent-type-imports": [
       "warn",
       {

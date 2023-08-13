@@ -1,8 +1,10 @@
-import { Button } from "@/client/components/ui/button";
 import { ModeToggle } from "@/client/components/ModeToggle";
-import { Text } from "@/client/components/ui/text";
-import { getServerSession } from "next-auth";
-import { type GetServerSidePropsContext } from "next";
+import { type AuthOptions, getServerSession } from "next-auth";
+import {
+  type NextApiRequest,
+  type GetServerSidePropsContext,
+  type NextApiResponse,
+} from "next";
 import { api } from "@/utils/api";
 import React from "react";
 import { authOptionsWrapper } from "./api/auth/[...nextauth]";
@@ -11,23 +13,13 @@ import Sidebar from "@/client/components/layout/Sidebar";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import OAuthModal from "@/client/components/OAuthModal";
-import { Profile, Users, useGetCurrentUserQuery } from "@/client/features/user";
+import { Profile, Users } from "@/client/features/user";
 import { DeviceDetail, Devices, Logs } from "@/client/features/device";
 import { Dashboard } from "@/client/features/dashboard/intex";
 import BreadCrumbs from "@/client/components/BreadCrumbs";
 import { Undo2 } from "lucide-react";
 
 export default function Home() {
-  const [id, setId] = React.useState<string>("");
-  // const getAll = api.device.getAll.useQuery();
-  // const start = api.device.start.useMutation();
-  // const pause = api.device.pause.useMutation();
-  // const remove = api.device.remove.useMutation();
-  // const getByDevice = api.log.getByDevice.useQuery(
-  //   { deviceId: id },
-  //   { enabled: !!id }
-  // );
-
   const router = useRouter();
   const { data: session } = useSession();
   const { data } = api.user.checkIfOAuth.useQuery(
@@ -38,7 +30,6 @@ export default function Home() {
   return (
     <main className="mx-auto flex min-h-screen w-full min-w-[280px] max-w-[2000px] flex-col lg:flex-row">
       {data && <OAuthModal isOAuthUser={data} />}
-
       <Header />
       <Sidebar />
       <div className="flex min-h-screen flex-col lg:order-2 lg:grow ">
@@ -48,11 +39,14 @@ export default function Home() {
           </h1>
           <ModeToggle />
         </div>
-        <div className="flex flex-grow flex-col py-4 sm:pl-8 sm:pr-16 px-4">
+        <div className="flex flex-grow flex-col px-4 py-4 sm:pl-8 sm:pr-16">
           <div className="flex justify-start gap-4">
-            <button onClick={()=>{
-              router.back()
-            }} className="mb-4 rounded-lg border bg-muted px-3 py-1 text-sm font-medium">
+            <button
+              onClick={() => {
+                router.back();
+              }}
+              className="mb-4 rounded-lg border bg-muted px-3 py-1 text-sm font-medium"
+            >
               <Undo2 size={15} />
             </button>
             <BreadCrumbs routerQueries={[...(router.query.slug ?? [])]} />
@@ -83,10 +77,12 @@ export default function Home() {
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const session = await getServerSession(
-    //@ts-ignore
-    ...authOptionsWrapper(context.req, context.res)
-  );
+  const options: [NextApiRequest, NextApiResponse, AuthOptions] =
+    authOptionsWrapper(
+      context.req as NextApiRequest,
+      context.res as NextApiResponse
+    ) as [NextApiRequest, NextApiResponse, AuthOptions];
+  const session = await getServerSession(...options);
 
   if (!session) {
     return {

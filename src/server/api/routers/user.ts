@@ -4,7 +4,6 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import sha256 from "crypto-js/sha256";
-import { omit } from "lodash";
 
 const hashPassword = (password: string) => {
   return sha256(password).toString()
@@ -29,8 +28,10 @@ export const userRouter = createTRPCRouter({
           email: input.email,
         },
       });
-      //@ts-ignore
-      const {password , ...rest} = user;
+      if (!user){
+        return null;
+      }
+      const {password , ...rest} = user
       return rest;
     }
   ),
@@ -42,8 +43,10 @@ export const userRouter = createTRPCRouter({
           id: input.id,
         },
       });
-      //@ts-ignore
-      const {password , ...rest} = user;
+      if (!user){
+        return null;
+      }
+      const {password , ...rest} = user
       return rest;
     }
   ),
@@ -55,7 +58,10 @@ export const userRouter = createTRPCRouter({
           groupId: Number(input.groupId),
         },
       });
-      const newUsers = users.map(user=>{
+      if (!users){
+        return null;
+      }
+      const newUsers = users.map((user)=>{
         const {password , ...rest} = user;
         return rest;
       }
@@ -66,6 +72,9 @@ export const userRouter = createTRPCRouter({
   getAll: publicProcedure
     .query(async ({ ctx }) => {
       const users = await ctx.prisma.user.findMany();
+      if (!users){
+        return null;
+      }
       const newUsers = users.map(user=>{
         const {password , ...rest} = user;
         return rest;
@@ -80,6 +89,9 @@ export const userRouter = createTRPCRouter({
           role: 'USER',
         }
       });
+      if (!users){
+        return null;
+      }
       const assignedDevices = await ctx.prisma.device.findMany({
         where: {
           patient: {
@@ -117,11 +129,14 @@ export const userRouter = createTRPCRouter({
           email: input.email,
         },
       });
+      if (!user){
+        return null;
+      }
       if (user?.password){
         return null;
       }
       else {
-        const {password , ...rest} = user;
+        const {password , ...rest} = user 
         return rest;
       };
     }

@@ -19,14 +19,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/client/components/ui/table";
-import { Badge } from "@/client/components/ui/badge";
 import { api } from "@/utils/api";
 import { ArrowUpDown, RotateCcw } from "lucide-react";
-
 import { Button } from "@/client/components/ui/button";
-
 import { DataTablePagination } from "@/client/components/DataTablePagination";
-import Link from "next/link";
 import { RotatingLines } from "react-loader-spinner";
 import { getQueryKey } from "@trpc/react-query";
 import { useQueryClient } from "@tanstack/react-query";
@@ -142,7 +138,6 @@ export default function Logs({deviceId = null} : {deviceId: string | null}) {
 
   const table = useReactTable({
     data: data ?? [],
-    //@ts-ignore
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

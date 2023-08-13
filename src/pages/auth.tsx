@@ -10,9 +10,13 @@ import {
 import { SignIn, SignInWithProviders, SignUp } from "@/client/features/user";
 import { Separator } from "@/client/components/ui/separator";
 import dynamic from "next/dynamic";
-import { getServerSession } from "next-auth";
+import { type AuthOptions, getServerSession } from "next-auth";
 import { authOptionsWrapper } from "./api/auth/[...nextauth]";
-import { type GetServerSidePropsContext } from "next";
+import {
+  type NextApiRequest,
+  type GetServerSidePropsContext,
+  type NextApiResponse,
+} from "next";
 import { helper } from "@/utils/helper";
 
 const AccountDrawer = dynamic(
@@ -48,7 +52,7 @@ const Auth = () => {
             />
           </div>
           <div className="col-span-3 h-full px-8">
-            <div className="flex w-full items-center justify-between flex-col lg:flex-row gap-3">
+            <div className="flex w-full flex-col items-center justify-between gap-3 lg:flex-row">
               <AccountDrawer />
               <SignInWithProviders />
             </div>
@@ -80,10 +84,12 @@ export default Auth;
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  //@ts-ignore
-  const session = await getServerSession(
-    ...authOptionsWrapper(context.req, context.res)
-  );
+  const options: [NextApiRequest, NextApiResponse, AuthOptions] =
+    authOptionsWrapper(
+      context.req as NextApiRequest,
+      context.res as NextApiResponse
+    ) as [NextApiRequest, NextApiResponse, AuthOptions];
+  const session = await getServerSession(...options);
 
   if (session) {
     return {

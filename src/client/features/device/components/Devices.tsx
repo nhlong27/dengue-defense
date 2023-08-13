@@ -21,7 +21,7 @@ import {
 } from "@/client/components/ui/table";
 import { Badge } from "@/client/components/ui/badge";
 import { api } from "@/utils/api";
-import { ArrowUpDown, FolderOpenDot, RotateCcw } from "lucide-react";
+import { ArrowUpDown, RotateCcw } from "lucide-react";
 
 import { Button } from "@/client/components/ui/button";
 
@@ -29,7 +29,6 @@ import { DataTablePagination } from "@/client/components/DataTablePagination";
 import { DeviceCreation } from "./DeviceCreation";
 import UponDeletion from "./UponDeletion";
 import UponAssignment from "./UponAssignment";
-import Link from "next/link";
 import { RotatingLines } from "react-loader-spinner";
 import { getQueryKey } from "@trpc/react-query";
 import { useQueryClient } from "@tanstack/react-query";
@@ -145,7 +144,6 @@ export default function DataTable() {
 
   const table = useReactTable({
     data: data ?? [],
-    //@ts-ignore
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

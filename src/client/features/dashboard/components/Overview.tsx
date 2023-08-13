@@ -8,7 +8,6 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import {} from "recharts";
 
 const colors = ["#8884d8", "#82ca9d", "#facc15", "#FF0000"];
 
