@@ -114,7 +114,7 @@ const UponAssignment = ({ device }: { device: Device }) => {
                   key={user.id}
                   onSelect={(value) => {
                     setSelectedPatient(
-                      getUnassigned.data.find((user) => user.email === value) ??
+                      getUnassigned.data?.find((user) => user.email === value) ??
                         null
                     );
                     setOpen(false);

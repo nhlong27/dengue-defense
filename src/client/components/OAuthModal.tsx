@@ -29,7 +29,7 @@ const OAuthModal = ({
     if (role) {
       setIsSubmitting(true);
       updateRole.mutate({ email: isOAuthUser.email!, role }, {
-        onSuccess: (response) => {
+        onSuccess: () => {
           toast({
             title: "Registration completed!",
           });
@@ -50,7 +50,6 @@ const OAuthModal = ({
   }
   return (
     <AlertDialog open={!!isOAuthUser && isOpen}>
-      {/* <AlertDialogTrigger>Open</AlertDialogTrigger> */}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>

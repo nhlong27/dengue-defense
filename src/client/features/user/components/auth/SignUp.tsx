@@ -116,7 +116,6 @@ const SignUp = ({
         </CardDescription>
       </CardHeader>
       <Form {...form}>
-        {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <CardContent className="space-y-2">
             <FormField

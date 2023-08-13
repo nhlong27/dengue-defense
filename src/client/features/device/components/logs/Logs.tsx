@@ -112,18 +112,6 @@ export const columns: ColumnDef<Device>[] = [
       return <div className="text-center font-medium">{deviceId}</div>;
     },
   },
-  // {
-  //   id: "actions",
-  //   cell: ({ row }) => {
-  //     const device = row.original;
-  //     return (
-  //       <div className="flex items-center justify-between">
-  //         <UponAssignment device={device} />
-  //         <UponDeletion device={device} />
-  //       </div>
-  //     );
-  //   },
-  // },
 ];
 
 export default function Logs({deviceId = null} : {deviceId: string | null}) {

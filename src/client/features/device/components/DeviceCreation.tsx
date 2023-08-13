@@ -157,22 +157,6 @@ export function DeviceCreation() {
                 </FormItem>
               )}
             />
-            {/* <FormField
-              control={form.control}
-              name="patient"
-              render={({ field }) => (
-                <FormItem className="space-y-1">
-                  <FormLabel>Assigned to patient ID</FormLabel>
-                  <FormControl>
-                    <Input placeholder="patient_A_ID" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Note: you can do this later.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger  asChild>
                 <div className="flex gap-4 text-sm text-muted-foreground items-end">

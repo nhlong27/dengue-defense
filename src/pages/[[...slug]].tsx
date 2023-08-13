@@ -26,7 +26,6 @@ export default function Home() {
     { email: session?.user?.email ?? "" },
     { enabled: !!session?.user?.email }
   );
-  console.log(router);
   return (
     <main className="mx-auto flex min-h-screen w-full min-w-[280px] max-w-[2000px] flex-col lg:flex-row">
       {data && <OAuthModal isOAuthUser={data} />}
