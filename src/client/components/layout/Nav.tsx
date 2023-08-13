@@ -16,7 +16,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/client/components/ui/sheet";
-import { Github, Linkedin, LogOut, Menu, User } from "lucide-react";
+import {
+  Github,
+  Linkedin,
+  LogOut,
+  Menu,
+  User,
+  UserCircle2,
+} from "lucide-react";
 import { ModeToggle } from "../ModeToggle";
 import { signOut, useSession } from "next-auth/react";
 import {
@@ -29,11 +36,12 @@ import Link from "next/link";
 import { toast } from "../ui/use-toast";
 import { useRouter } from "next/router";
 import NavContent from "./NavContent";
+import { useGetCurrentUserQuery } from "@/client/features/user";
 
 const Nav = () => {
   const router = useRouter();
-  const { data: session } = useSession();
-  return (
+  const user = useGetCurrentUserQuery();
+  return user.data ? (
     <>
       <nav className="mx-auto flex h-full w-11/12 items-center lg:hidden">
         <Sheet>
@@ -60,16 +68,23 @@ const Nav = () => {
         <Menubar className="ml-auto mr-4 rounded-full  border-0 p-0">
           <MenubarMenu>
             <MenubarTrigger className="flex  w-full gap-3 rounded-full py-0 pl-4 pr-0">
-              {session?.user?.name ?? session?.user?.email}
+              <span className="hidden sm:block">
+
+              {user.data.name ?? user.data.email}
+              </span>
               <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarImage src="" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
             </MenubarTrigger>
             <MenubarContent className="mr-12">
               <MenubarItem
                 className="flex gap-3"
-                onClick={() => void router.push("/profile")}
+                onClick={() =>
+                  void router.push(
+                    `/profile?id=${user.data?.id}&role=${user.data?.role}`
+                  )
+                }
               >
                 <User size={15} />
                 Profile
@@ -98,18 +113,16 @@ const Nav = () => {
                 </Link>
               </MenubarItem>
               <MenubarSeparator />
-              <MenubarItem className="flex gap-2">
+              <MenubarItem
+                className="flex gap-2"
+                onClick={() => {
+                  signOut()
+                    .then((res) => console.log(res))
+                    .catch((err) => console.log(err));
+                }}
+              >
                 <LogOut size={15} />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="px-0 font-normal"
-                  onClick={() => {
-                    signOut()
-                      .then((res) => console.log(res))
-                      .catch((err) => console.log(err));
-                  }}
-                >
+                <Button variant="ghost" size="sm" className="px-0 font-normal">
                   Sign out
                 </Button>
               </MenubarItem>
@@ -117,7 +130,7 @@ const Nav = () => {
           </MenubarMenu>
         </Menubar>
       </nav>
-      <nav className="hidden h-full w-full lg:flex lg:flex-col">
+      <nav className="hidden max-h-screen w-full lg:sticky lg:bottom-0 lg:top-0 lg:flex lg:flex-col">
         <div className="relative flex h-20 w-full items-center justify-start">
           {/* <Image /> */}
           Logo
@@ -127,15 +140,19 @@ const Nav = () => {
           <MenubarMenu>
             <MenubarTrigger className="flex w-full gap-3 rounded-full py-0 pl-0">
               <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarImage src="" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
-              {session?.user?.name ?? session?.user?.email}
+              {user.data.name ?? user.data.email}
             </MenubarTrigger>
             <MenubarContent className="mr-12">
               <MenubarItem
                 className="flex gap-3"
-                onClick={() => void router.push("/profile")}
+                onClick={() =>
+                  void router.push(
+                    `/profile?id=${user.data?.id}&role=${user.data?.role}`
+                  )
+                }
               >
                 <User size={15} />
                 Profile
@@ -164,21 +181,19 @@ const Nav = () => {
                 </Link>
               </MenubarItem>
               <MenubarSeparator />
-              <MenubarItem className="flex gap-2">
+              <MenubarItem
+                className="flex gap-2"
+                onClick={() => {
+                  signOut()
+                    .then(() => {
+                      toast({ title: "Sign out successfully" });
+                      void router.push("/");
+                    })
+                    .catch((err) => console.log(err));
+                }}
+              >
                 <LogOut size={15} />
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="px-0 font-normal"
-                  onClick={() => {
-                    signOut()
-                      .then(() => {
-                        toast({ title: "Sign out successfully" });
-                        void router.push("/");
-                      })
-                      .catch((err) => console.log(err));
-                  }}
-                >
+                <Button variant="ghost" size="sm" className="px-0 font-normal">
                   Sign out
                 </Button>
               </MenubarItem>
@@ -187,7 +202,7 @@ const Nav = () => {
         </Menubar>
       </nav>
     </>
-  );
+  ) : null;
 };
 
 export default Nav;

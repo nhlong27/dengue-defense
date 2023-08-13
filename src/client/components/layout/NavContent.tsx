@@ -1,11 +1,46 @@
 import React from "react";
 import { Button } from "../ui/button";
 import { useRouter } from "next/router";
-import { Calendar, GanttChartSquare, Home, MonitorSmartphone, ScrollText, Users } from "lucide-react";
+import {
+  Calendar,
+  GanttChartSquare,
+  Home,
+  MonitorSmartphone,
+  ScrollText,
+  UserSquare2,
+  Users,
+} from "lucide-react";
+import { api } from "@/utils/api";
+import { useGetCurrentUserQuery } from "@/client/features/user";
 
 const NavContent = () => {
   const router = useRouter();
-  return (
+  const user = useGetCurrentUserQuery();
+  const log = api.user.getLastLog.useQuery(
+    {
+      userId: user.data?.id,
+    },
+    {
+      enabled: !!user.data?.id,
+    }
+  );
+  const group = api.group.getByOwner.useQuery(
+    {
+      ownerId: user.data?.id,
+    },
+    {
+      enabled: !!user.data?.id,
+    }
+  );
+  const patientsOfGroup = api.user.getByGroupId.useQuery(
+    {
+      groupId: group.data?.id.toString(),
+    },
+    {
+      enabled: !!group.data?.id,
+    }
+  );
+  return patientsOfGroup ? (
     <div className="w-full">
       <div className="flex w-full flex-col gap-1">
         <Button
@@ -57,23 +92,69 @@ const NavContent = () => {
           <ScrollText size={20} /> Logs
         </Button>
       </div>
-      <p className="text-sm font-bold text-stone-300 mt-12 mb-4">Your groups</p>
+      <p className="mb-4 mt-12 text-sm font-bold text-stone-300">
+        Your {user.data?.id === "ADMIN" ? "group" : "data"}
+      </p>
       <div className="flex w-full flex-col gap-1">
-        <Button
-          onClick={() => {
-            void router.push("/group/...");
-          }}
-          variant="ghost"
-          size="lg"
-          className={`flex w-full items-center justify-start gap-3 ${
-            router.query.slug?.[0] === "group" ? "bg-accent" : ""
-          }`}
-        >
-          <GanttChartSquare size={20} /> Group ...
-        </Button>
+        {user.data?.role === "ADMIN" ? (
+          <>
+            <Button
+              variant="outline"
+              onClick={() => {
+                void router.push({
+                  pathname: "/users",
+                  query: {
+                    role: "patient",
+                  },
+                });
+              }}
+            >
+              Add patient
+            </Button>
+
+            {patientsOfGroup.data?.map((patient) => (
+              <Button
+                key={patient.id}
+                onClick={() => {
+                  void router.push(`/profile?id=${patient.id}`);
+                }}
+                variant="ghost"
+                size="lg"
+                className={`flex w-full items-center justify-start gap-3 ${
+                  router.query.slug?.[0] === "group" ? "bg-accent" : ""
+                }`}
+              >
+                <UserSquare2 size={20} /> {patient.email}
+              </Button>
+            ))}
+          </>
+        ) : (
+          <div className="flex gap-4 px-8">
+            Group ID
+            <span className="text-muted-foreground">
+              {user.data?.groupId ?? "N/A"}
+            </span>
+          </div>
+        )}
       </div>
+      {user.data?.role === "USER" && (
+        <div className="mt-4 flex flex-col gap-4">
+          <div className="flex w-full justify-between rounded-lg border px-6 py-3 text-sm text-orange-500 dark:text-orange-300 items-center">
+            Temperature
+            <span className="text-base">{log.data?.temp ?? 'N/A'}</span>
+          </div>
+          <div className="flex w-full rounded-lg border px-6 py-3 text-sm text-green-500 dark:text-green-300 justify-between items-center">
+            SpO2
+            <span className="text-base ">{log.data?.spo2 ?? 'N/A'}</span>
+          </div>
+          <div className="flex w-full rounded-lg border px-6 py-3 text-sm text-purple-500 dark:text-purple-300 justify-between items-center">
+            Heart Pressure
+            <span className="text-base ">{log.data?.HP ?? 'N/A'}</span>
+          </div>
+        </div>
+      )}
     </div>
-  );
+  ) : null;
 };
 
 export default NavContent;

@@ -147,6 +147,11 @@ export const deviceRouter = createTRPCRouter({
         });
         await admin.disconnect();
       }
+      const logsToDelete = await ctx.prisma.log.deleteMany({
+        where: {
+          deviceId: Number(input.deviceId),
+        },
+      });
       const deviceToDelete = await ctx.prisma.device.delete({
         where: {
           id: Number(input.deviceId),
@@ -175,7 +180,7 @@ export const deviceRouter = createTRPCRouter({
     }
   ),
   create: publicProcedure
-    .input(z.object({ title: z.string(), patient: z.string().optional(), ownerId: z.string() }))
+    .input(z.object({ title: z.string(), patient: z.string().nullable(), ownerId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       console.log('working')
       const device = await ctx.prisma.device.create({

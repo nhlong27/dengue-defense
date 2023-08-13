@@ -61,9 +61,9 @@ const DeviceDetail = ({ id }: { id: string }) => {
         </div>
         {!getDevice.data.patient && <UponAssignment device={getDevice.data} />}
       </div>
-      <div className="ml-4 mt-3 flex items-center gap-4 italic text-muted-foreground">
+      <div className="sm:ml-4 mt-3 flex sm:items-center gap-4 italic text-muted-foreground flex-col sm:flex-row items-start">
         <Button
-          disabled={startDevice.isLoading}
+          disabled={startDevice.isLoading || getDevice.data.active}
           variant="default"
           className="flex items-center gap-2"
           onClick={() => {
@@ -94,7 +94,7 @@ const DeviceDetail = ({ id }: { id: string }) => {
           )}
         </Button>
         <Button
-          disabled={pauseDevice.isLoading}
+          disabled={pauseDevice.isLoading || !getDevice.data.active}
           variant="secondary"
           className="flex items-center gap-2"
           onClick={() => {
@@ -124,7 +124,7 @@ const DeviceDetail = ({ id }: { id: string }) => {
             <RotatingLines strokeColor="#422006" strokeWidth="5" width="20" />
           )}
         </Button>
-        Monitoring
+        Monitoring - 10-second intervals
         <div className="ml-auto">
           {getDevice.data.active ? (
             <Badge

@@ -9,7 +9,6 @@ import {
   DialogTrigger,
 } from "@/client/components/ui/dialog";
 import { Input } from "@/client/components/ui/input";
-import { Label } from "@/client/components/ui/label";
 import { api } from "@/utils/api";
 import { z } from "zod";
 import {
@@ -33,12 +32,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/client/components/ui/select";
-import { useRouter } from "next/router";
 import { useGetCurrentUserQuery } from "../../user";
+import { getQueryKey } from "@trpc/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/client/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/client/components/ui/command";
+import { User } from "@prisma/client";
 
 const addDeviceSchema = z.object({
   title: z.string().min(2, { message: "Title must be at least 2 characters." }),
-  patient: z.string().optional(),
 });
 
 export function DeviceCreation() {
@@ -46,21 +59,27 @@ export function DeviceCreation() {
     resolver: zodResolver(addDeviceSchema),
     defaultValues: {
       title: "",
-      patient: "",
     },
   });
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isDone, setIsDone] = React.useState(false);
   const createDevice = api.device.create.useMutation();
   const getUser = useGetCurrentUserQuery();
+  const deviceGetAllKey = getQueryKey(api.device.getAll, undefined, "query");
+  const queryClient = useQueryClient();
+  const getUnassigned = api.user.getUnassigned.useQuery();
+  const [selectedPatient, setSelectedPatient] = React.useState<Omit<
+    User,
+    "password"
+  > | null>(null);
+  const [open, setOpen] = React.useState(false);
+
   const onSubmit = (data: z.infer<typeof addDeviceSchema>) => {
-    setIsSubmitting(true);
     if (getUser.data) {
       createDevice.mutate(
         {
           title: data.title,
-          patient: data.patient ?? undefined,
           ownerId: getUser.data.id,
+          patient: selectedPatient ? selectedPatient.id : null,
         },
         {
           onSuccess: (response) => {
@@ -74,8 +93,7 @@ export function DeviceCreation() {
                 </div>
               ),
             });
-
-            setIsSubmitting(false);
+            void queryClient.invalidateQueries(deviceGetAllKey);
           },
           onError: (error) => {
             console.log(error);
@@ -84,19 +102,20 @@ export function DeviceCreation() {
               description: "Check console for error message",
               variant: "destructive",
             });
-            setIsSubmitting(false);
           },
           onSettled: () => {
+            setSelectedPatient(null);
             setIsDone(true);
           },
         }
       );
     }
   };
-  return (
+  console.log(selectedPatient)
+  return getUnassigned ? (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="default" className="ml-8">
+        <Button disabled={getUser.data?.role!=='ADMIN'} variant="default" className="ml-8">
           Add a device
         </Button>
       </DialogTrigger>
@@ -111,7 +130,7 @@ export function DeviceCreation() {
               </DialogDescription>
             </DialogHeader>
 
-            {/* <Select>
+            <Select>
               <FormLabel>Model</FormLabel>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="3-Multi" />
@@ -125,7 +144,7 @@ export function DeviceCreation() {
                   Bio-2D (Out of order)
                 </SelectItem>
               </SelectContent>
-            </Select> */}
+            </Select>
             <FormField
               control={form.control}
               name="title"
@@ -139,7 +158,7 @@ export function DeviceCreation() {
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               control={form.control}
               name="patient"
               render={({ field }) => (
@@ -154,7 +173,47 @@ export function DeviceCreation() {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger  asChild>
+                <div className="flex gap-4 text-sm text-muted-foreground items-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="justify-start bg-primary/30 text-secondary-foreground"
+                >
+                  Assign to
+                </Button>
+                {open ? 'You can add this later.' : selectedPatient?.email}
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="p-0" side="bottom" align="start">
+                <Command>
+                  <CommandInput placeholder="Unassigned patients:" />
+                  <CommandList>
+                    <CommandEmpty>No results found.</CommandEmpty>
+                    <CommandGroup>
+                      {getUnassigned.data?.map((user) => (
+                        <CommandItem
+                          key={user.id}
+                          onSelect={(value) => {
+                            setSelectedPatient(
+                              getUnassigned.data?.find(
+                                (user) => user.email === value
+                              ) ?? null
+                            );
+                            setOpen(false);
+                          }}
+                        >
+                          <span>{user.email}</span>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
             <DialogFooter>
               {isDone ? (
                 <DialogTrigger asChild>
@@ -168,11 +227,11 @@ export function DeviceCreation() {
               ) : (
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={createDevice.isLoading}
                   className="flex gap-2"
                 >
                   Save changes
-                  {isSubmitting && (
+                  {createDevice.isLoading && (
                     <RotatingLines
                       strokeColor="#422006"
                       strokeWidth="5"
@@ -186,5 +245,5 @@ export function DeviceCreation() {
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  ) : null;
 }

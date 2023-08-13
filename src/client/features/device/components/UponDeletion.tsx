@@ -76,16 +76,16 @@ const UponDeletion = ({ device }: { device: Device }) => {
           <DropdownMenuSeparator />
           <DropdownMenuItem
             disabled={!device.patient}
-            onClick={() => void navigator.clipboard.writeText(device.patient)}
+            onClick={() => void navigator.clipboard.writeText(device.patient!)}
           >
             Copy patient ID
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem disabled={!device.ownerId}>
-            View doctor
+            <Link href={`/profile?id=${device.ownerId}&role=doctor`}>View doctor</Link>
           </DropdownMenuItem>
           <DropdownMenuItem disabled={!device.patient}>
-            View patient
+            <Link href={`/profile?id=${device.patient}&role=patient`}>View patient</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Link href={`/device/${device.id}`}>View device logs</Link>

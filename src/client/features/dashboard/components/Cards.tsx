@@ -16,93 +16,119 @@ import {
 import { api } from "@/utils/api";
 import Overview from "./Overview";
 import { Logs } from "../../device";
+import Link from "next/link";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/client/components/ui/popover";
+import { Button } from "@/client/components/ui/button";
 
 const Cards = () => {
   const getAllUsers = api.user.getAll.useQuery();
   const getAllDevices = api.device.getAll.useQuery();
   const getAllGroups = api.group.getAll.useQuery();
-  const getAllLogs = api.log.getByDevice.useQuery({ deviceId: null});
+  const getAllLogs = api.log.getByDevice.useQuery({ deviceId: null });
   return getAllUsers.data &&
     getAllDevices.data &&
     getAllGroups.data &&
     getAllLogs.data ? (
     <TabsContent value="overview" className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="cursor-pointer bg-gradient-to-tr from-transparent to-primary/10 transition-all duration-300 hover:scale-105">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total patients
-            </CardTitle>
-            <Accessibility className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {getAllUsers.data.filter((user) => user.role === "USER").length}{" "}
-              <span className="text-base font-normal   text-muted-foreground">
-                patients
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              +{getAllUsers.data.filter((user) => user.role === "USER").length}{" "}
-              from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="cursor-pointer bg-gradient-to-tr from-transparent to-primary/10 transition-all duration-300 hover:scale-105">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Doctors</CardTitle>
-            <Stethoscope className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {getAllUsers.data.filter((user) => user.role === "ADMIN").length}{" "}
-              <span className="text-base font-normal   text-muted-foreground">
-                doctors
-              </span>
-            </div>
+        <Link href="/users?role=patient">
+          <Card className="cursor-pointer bg-gradient-to-tr from-transparent to-primary/10 transition-all duration-300 hover:scale-105">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Total patients
+              </CardTitle>
+              <Accessibility className="h-5 w-5 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {getAllUsers.data.filter((user) => user.role === "USER").length}{" "}
+                <span className="text-base font-normal   text-muted-foreground">
+                  patients
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                +
+                {getAllUsers.data.filter((user) => user.role === "USER").length}{" "}
+                from last month
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/users?role=doctor">
+          <Card className="cursor-pointer bg-gradient-to-tr from-transparent to-primary/10 transition-all duration-300 hover:scale-105">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Doctors</CardTitle>
+              <Stethoscope className="h-5 w-5 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {
+                  getAllUsers.data.filter((user) => user.role === "ADMIN")
+                    .length
+                }{" "}
+                <span className="text-base font-normal   text-muted-foreground">
+                  doctors
+                </span>
+              </div>
 
-            <p className="text-xs text-muted-foreground">
-              +{getAllUsers.data.filter((user) => user.role === "ADMIN").length}{" "}
-              from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="cursor-pointer bg-gradient-to-tr from-transparent to-primary/10 transition-all duration-300 hover:scale-105">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Devices</CardTitle>
-            <MonitorSmartphone className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {getAllDevices.data.length}{" "}
-              <span className="text-base font-normal   text-muted-foreground">
-                devices
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              +{getAllDevices.data.length} from last month
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="cursor-pointer bg-gradient-to-tr from-transparent to-primary/10 transition-all duration-300 hover:scale-105">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Groups created
-            </CardTitle>
-            <Ungroup className="h-5 w-5 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {getAllGroups.data.length}{" "}
-              <span className="text-base font-normal   text-muted-foreground">
-                groups
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              +{getAllGroups.data.length} since last hour
-            </p>
-          </CardContent>
-        </Card>
+              <p className="text-xs text-muted-foreground">
+                +
+                {
+                  getAllUsers.data.filter((user) => user.role === "ADMIN")
+                    .length
+                }{" "}
+                from last month
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/devices">
+          <Card className="cursor-pointer bg-gradient-to-tr from-transparent to-primary/10 transition-all duration-300 hover:scale-105">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Devices</CardTitle>
+              <MonitorSmartphone className="h-5 w-5 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {getAllDevices.data.length}{" "}
+                <span className="text-base font-normal   text-muted-foreground">
+                  devices
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                +{getAllDevices.data.length} from last month
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Popover>
+          <PopoverTrigger>
+            <Card className="cursor-pointer bg-gradient-to-tr from-transparent to-primary/10 transition-all duration-300 hover:scale-105">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Groups created
+                </CardTitle>
+                <Ungroup className="h-5 w-5 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {getAllGroups.data.length}{" "}
+                  <span className="text-base font-normal   text-muted-foreground">
+                    groups
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  +{getAllGroups.data.length} since last hour
+                </p>
+              </CardContent>
+            </Card>
+          </PopoverTrigger>
+          <PopoverContent>Features to be developed.</PopoverContent>
+        </Popover>
       </div>
       <div className="grid grid-cols-1 gap-4">
         <Card className="col-span-4">
@@ -179,7 +205,10 @@ const Cards = () => {
         </Card>
         <Card className="col-span-3">
           <CardHeader>
-            <CardTitle className="text-primary">Recent Logs</CardTitle>
+            <CardTitle className="flex items-center justify-between text-primary">
+              Recent Logs
+              <Link href='/logs' className="hover:underline text-muted-foreground text-sm mr-8">See more</Link>
+            </CardTitle>
             <CardDescription>
               There are a total of {getAllLogs.data.length} logs.
             </CardDescription>

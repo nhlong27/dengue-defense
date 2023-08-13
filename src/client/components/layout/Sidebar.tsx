@@ -15,7 +15,7 @@ const Nav = dynamic(() => import("./Nav"), {
 
 const Sidebar = () => {
   return (
-    <div className="hidden w-[18rem] border-r px-8 lg:flex">
+    <div className="hidden w-[18rem] border-r px-8 lg:flex ">
       <Nav />
     </div>
   );

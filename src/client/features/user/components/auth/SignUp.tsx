@@ -40,8 +40,13 @@ const signUpSchema = z.object({
   role: z.enum(["USER", "ADMIN"]),
 });
 
-const SignUp = () => {
-  const [shouldSignUpAsDoctor, setShouldSignUpAsDoctor] = React.useState(false);
+const SignUp = ({
+  shouldSignUpAsDoctor,
+  setShouldSignUpAsDoctor,
+}: {
+  shouldSignUpAsDoctor: boolean;
+  setShouldSignUpAsDoctor: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const createUser = api.user.create.useMutation();
   const form = useForm<z.infer<typeof signUpSchema>>({
@@ -53,7 +58,7 @@ const SignUp = () => {
       role: "USER",
     },
   });
-  const router = useRouter()
+  const router = useRouter();
 
   const onSubmit = (data: z.infer<typeof signUpSchema>) => {
     setIsSubmitting(true);
@@ -78,15 +83,14 @@ const SignUp = () => {
             ),
           });
 
-
-          void router.push('/')
+          void router.push("/");
           setIsSubmitting(false);
         },
         onError: (error) => {
           console.log(error);
           toast({
             title: "Register failed",
-            description: "Check console for error message",
+            description: "Credentials already exist.",
             variant: "destructive",
           });
           setIsSubmitting(false);
@@ -124,7 +128,7 @@ const SignUp = () => {
                     {shouldSignUpAsDoctor ? "Doctor Name" : "Name"}
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Long" {...field} />
+                    <Input placeholder={shouldSignUpAsDoctor ? "Doctor <number>" : "Patient <number>"} {...field} />
                   </FormControl>
                   <FormDescription>
                     This is your public display name.
@@ -142,7 +146,7 @@ const SignUp = () => {
                     {shouldSignUpAsDoctor ? "Doctor Email" : "Email"}
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="nhlong2706@gmail.com" {...field} />
+                    <Input placeholder={shouldSignUpAsDoctor ? "doctor<number>@mail.com" : "patient<number>@mail.com"} {...field} />
                   </FormControl>
                   <FormDescription>Use your unique email.</FormDescription>
                   <FormMessage />
@@ -158,7 +162,7 @@ const SignUp = () => {
                     {shouldSignUpAsDoctor ? "Doctor Password" : "Password"}
                   </FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="******" {...field} />
+                    <Input type="password" placeholder={shouldSignUpAsDoctor ? "doctor<number>" : "patient<number>"} {...field} />
                   </FormControl>
                   <FormDescription>Choose a secure password.</FormDescription>
                   <FormMessage />
@@ -167,7 +171,7 @@ const SignUp = () => {
             />
           </CardContent>
           <CardFooter>
-          <Button
+            <Button
               type="submit"
               disabled={isSubmitting}
               className="flex gap-2"

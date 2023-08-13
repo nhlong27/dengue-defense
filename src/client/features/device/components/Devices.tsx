@@ -21,7 +21,7 @@ import {
 } from "@/client/components/ui/table";
 import { Badge } from "@/client/components/ui/badge";
 import { api } from "@/utils/api";
-import { ArrowUpDown, RotateCcw } from "lucide-react";
+import { ArrowUpDown, FolderOpenDot, RotateCcw } from "lucide-react";
 
 import { Button } from "@/client/components/ui/button";
 
@@ -34,6 +34,7 @@ import { RotatingLines } from "react-loader-spinner";
 import { getQueryKey } from "@trpc/react-query";
 import { useQueryClient } from "@tanstack/react-query";
 import BelongsTo from "./BelongsTo";
+import DeviceLink from "./DeviceLink";
 
 export type Device = {
   id: number;
@@ -62,7 +63,10 @@ export const columns: ColumnDef<Device>[] = [
     },
     cell: ({ row }) => {
       const id: string = row.getValue("id");
-      return <div className="text-right font-medium">{id}</div>;
+      const ownerId: string = row.getValue("ownerId");
+      return (
+        <DeviceLink id={id} ownerId={ownerId} />
+      );
     },
   },
   {
@@ -80,12 +84,7 @@ export const columns: ColumnDef<Device>[] = [
     },
     cell: ({ row }) => {
       const title: string = row.getValue("title");
-      const id: string = row.getValue("id");
-      return (
-        <Link href={`/devices/${id}`} className="text-center font-medium">
-          {title}
-        </Link>
-      );
+      return <div className="text-center font-medium">{title}</div>;
     },
   },
   {
@@ -117,7 +116,7 @@ export const columns: ColumnDef<Device>[] = [
     header: () => <div className="text-center">Belongs to</div>,
     cell: ({ row }) => {
       const ownerId: string = row.getValue("ownerId");
-      return <BelongsTo ownerId = {ownerId} />;
+      return <BelongsTo ownerId={ownerId} />;
     },
   },
   {

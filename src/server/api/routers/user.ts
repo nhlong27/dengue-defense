@@ -34,6 +34,35 @@ export const userRouter = createTRPCRouter({
       return rest;
     }
   ),
+  getById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const user = await ctx.prisma.user.findFirst({
+        where: {
+          id: input.id,
+        },
+      });
+      //@ts-ignore
+      const {password , ...rest} = user;
+      return rest;
+    }
+  ),
+  getByGroupId: publicProcedure
+    .input(z.object({ groupId: z.string().optional() }))
+    .query(async ({ input, ctx }) => {
+      const users = await ctx.prisma.user.findMany({
+        where: {
+          groupId: Number(input.groupId),
+        },
+      });
+      const newUsers = users.map(user=>{
+        const {password , ...rest} = user;
+        return rest;
+      }
+      )
+      return newUsers;
+    }
+  ),
   getAll: publicProcedure
     .query(async ({ ctx }) => {
       const users = await ctx.prisma.user.findMany();
@@ -110,6 +139,26 @@ export const userRouter = createTRPCRouter({
         },
       });
       return user;
+    }
+  ),
+  getLastLog : publicProcedure
+    .input(z.object({ userId: z.string().optional() }))
+    .query(async ({ input, ctx }) => {
+      if (!input.userId) return null;
+      const assignedDevice = await ctx.prisma.device.findFirst({
+        where: {
+          patient: input.userId,
+        },
+      });
+      const log = await ctx.prisma.log.findFirst({
+        where: {
+          deviceId: assignedDevice?.id,
+        },
+        orderBy: {
+          id: 'desc',
+        }
+      });
+      return log;
     }
   ),
 });

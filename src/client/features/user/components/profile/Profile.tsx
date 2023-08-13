@@ -1,19 +1,19 @@
 import { Skeleton } from "@/client/components/ui/skeleton";
 import { api } from "@/utils/api";
 import { Paperclip } from "lucide-react";
-import { useSession } from "next-auth/react";
 import React from "react";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/client/components/ui/hover-card";
-import { useGetCurrentUserQuery } from "../../hooks/useGetCurrentUserQuery";
+import { useRouter } from "next/router";
 
 const Profile = () => {
-  const user = useGetCurrentUserQuery();
+  const router = useRouter();
+  const user = api.user.getById.useQuery({id: router.query.id as string}, {enabled: !!router.query.id});
   
-  return (
+  return user ? (
     <div>
       <div className="px-4 sm:px-0">
         <h3 className="text-base font-semibold leading-7 text-muted-foreground">
@@ -138,7 +138,7 @@ const Profile = () => {
         </dl>
       </div>
     </div>
-  );
+  ) : null
 };
 
 export default Profile;

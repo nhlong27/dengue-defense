@@ -4,7 +4,7 @@ const minTemp = 36,
   minSpo2 = 95,
   maxSpo2 = 100,
   minHP = 60,
-  maxHP = 100;
+  maxHP = 70;
 
 const data = {
   temp: minTemp + (maxTemp - minTemp) * Math.random(),

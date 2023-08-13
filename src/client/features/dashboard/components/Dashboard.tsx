@@ -6,16 +6,16 @@ const Dashboard = () => {
   return (
     <div>
       <Tabs defaultValue="overview" className="space-y-4">
-        <div className="flex w-full justify-between px-8">
+        <div className="flex w-full justify-between px-0 lg:px-8 flex-col lg:flex-row gap-4">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="analytics" disabled>
+            <TabsTrigger  value="analytics" disabled>
               Analytics
             </TabsTrigger>
-            <TabsTrigger value="reports" disabled>
+            <TabsTrigger  className="hidden sm:block" value="reports" disabled>
               Reports
             </TabsTrigger>
-            <TabsTrigger value="notifications" disabled>
+            <TabsTrigger className="hidden sm:block" value="notifications" disabled>
               Notifications
             </TabsTrigger>
           </TabsList>

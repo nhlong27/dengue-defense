@@ -63,9 +63,10 @@ const UponAssignment = ({ device }: { device: Device }) => {
                   {
                     onSuccess: () => {
                       toast({
-                        title: "Started device!",
+                        title: "Updated device!",
                       });
                       void queryClient.invalidateQueries(deviceKey);
+                      setSelectedPatient(null);
                     },
                     onError: (error) => {
                       console.log(error);
@@ -74,6 +75,8 @@ const UponAssignment = ({ device }: { device: Device }) => {
                         description: "Check console for error message",
                         variant: "destructive",
                       });
+                      setSelectedPatient(null);
+
                     },
                   }
                 );
@@ -88,7 +91,7 @@ const UponAssignment = ({ device }: { device: Device }) => {
         </div>
       ) : (
         <PopoverTrigger
-          disabled={device.ownerId !== getUser.data.id && device.active}
+          disabled={device.ownerId !== getUser.data.id || device.active || !!device.patient}
           asChild
         >
           <Button
