@@ -1,5 +1,4 @@
 import sha256 from "crypto-js/sha256";
-import { omit } from "lodash";
 import { prisma } from "./db";
 
 const hashPassword = (password: string) => {
@@ -19,7 +18,8 @@ export async function checkCredentials ({ email, password } : { email: string, p
     },
   });
   if (user && user.password == hashPassword(password)) {
-    return omit(user, "password") as typeof user;
+    const {password, ...rest} = user
+    return rest
   } else {
     throw new Error("Invalid credentials");
   }

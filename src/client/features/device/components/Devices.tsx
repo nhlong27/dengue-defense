@@ -55,7 +55,7 @@ export const columns: ColumnDef<Device>[] = [
             className="px-0"
           >
             Device ID
-            <ArrowUpDown className="ml-2 h-4 w-4" />
+            <ArrowUpDown />
           </Button>
         </div>
       );
@@ -63,9 +63,7 @@ export const columns: ColumnDef<Device>[] = [
     cell: ({ row }) => {
       const id: string = row.getValue("id");
       const ownerId: string = row.getValue("ownerId");
-      return (
-        <DeviceLink id={id} ownerId={ownerId} />
-      );
+      return <DeviceLink id={id} ownerId={ownerId} />;
     },
   },
   {
@@ -77,7 +75,7 @@ export const columns: ColumnDef<Device>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Title
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowUpDown />
         </Button>
       );
     },
@@ -173,14 +171,15 @@ export default function DataTable() {
           {shouldRefresh ? (
             <RotatingLines strokeColor="#422006" strokeWidth="5" width="20" />
           ) : (
-            <RotateCcw
-              size={20}
+            <div
               onClick={() => {
                 setShouldRefresh((prev) => !prev);
                 setTimeout(() => setShouldRefresh((prev) => !prev), 1000);
                 void queryClient.invalidateQueries(deviceGetAllKey);
               }}
-            />
+            >
+              <RotateCcw size={20} />
+            </div>
           )}
         </Button>
       </div>
