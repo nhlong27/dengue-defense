@@ -39,14 +39,14 @@ model Account {
 }
 
 model Device {
-    id      Int     @id @default(autoincrement())
-    title   String
-    patient String?
-    active  Boolean @default(false)
-    owner   User?   @relation(fields: [ownerId], references: [id])
-    ownerId String?
+    id       Int     @id @default(autoincrement())
+    title    String
+    patient  String?
+    active   Boolean @default(false)
+    owner    User?   @relation(fields: [ownerId], references: [id])
+    ownerId  String?
     interval Int?
-    logs    Log[]
+    logs     Log[]
 }
 
 model Log {
@@ -85,6 +85,8 @@ model User {
     sessions      Session[]
     role          UserRole  @default(USER)
     devices       Device[]
+    group         Group?    @relation(fields: [groupId], references: [id])
+    groupId       Int?
 }
 
 model VerificationToken {
@@ -93,4 +95,11 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Group {
+    id      Int    @id @default(autoincrement())
+    count   Int
+    users   User[]
+    ownerId String
 }

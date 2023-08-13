@@ -7,7 +7,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/client/components/ui/dropdown-menu";
-import { useSession } from "next-auth/react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,15 +20,48 @@ import {
 } from "@/client/components/ui/alert-dialog";
 import { Button } from "@/client/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
-import { api } from "@/utils/api";
 import { type Device } from "./Devices";
+import { useGetCurrentUserQuery } from "../../user";
+import { api } from "@/utils/api";
+import { RotatingLines } from "react-loader-spinner";
+import { toast } from "@/client/components/ui/use-toast";
+import { getQueryKey } from "@trpc/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 
 const UponDeletion = ({ device }: { device: Device }) => {
-  const { data: session } = useSession();
-  const getUser = api.user.get.useQuery(
-    { email: session?.user?.email ?? "" },
-    { enabled: !!session?.user?.email }
-  );
+  const getUser = useGetCurrentUserQuery();
+  const removeDevice = api.device.remove.useMutation();
+  const deviceGetAllKey = getQueryKey(api.device.getAll, undefined, "query");
+  const queryClient = useQueryClient();
+  const handleRemove = () => {
+    removeDevice.mutate(
+      { deviceId: device.id.toString() },
+      {
+        onSuccess: (response) => {
+          toast({
+            title: "Remove device successfully!",
+            description: (
+              <div className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                <p className="text-white">
+                  Device {response.title} has been deleted.
+                </p>
+              </div>
+            ),
+          });
+          void queryClient.invalidateQueries(deviceGetAllKey);
+        },
+        onError: (error) => {
+          console.log(error);
+          toast({
+            title: "Command failed",
+            description: "Check console for error message",
+            variant: "destructive",
+          });
+        },
+      }
+    );
+  };
   return getUser.data ? (
     <AlertDialog>
       <DropdownMenu>
@@ -55,7 +87,9 @@ const UponDeletion = ({ device }: { device: Device }) => {
           <DropdownMenuItem disabled={!device.patient}>
             View patient
           </DropdownMenuItem>
-          <DropdownMenuItem>View device logs</DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link href={`/device/${device.id}`}>View device logs</Link>
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           {device.ownerId === getUser.data?.id ? (
             <AlertDialogTrigger>
@@ -83,8 +117,15 @@ const UponDeletion = ({ device }: { device: Device }) => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/70">
+          <AlertDialogAction
+            disabled={removeDevice.isLoading}
+            onClick={handleRemove}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/70"
+          >
             Remove
+            {removeDevice.isLoading && (
+              <RotatingLines strokeColor="#422006" strokeWidth="5" width="20" />
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

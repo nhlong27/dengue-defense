@@ -99,7 +99,7 @@ export const deviceRouter = createTRPCRouter({
       await createTopic(input.deviceId);
       const interval = setInterval( ()=>{ 
         produceMessage(input.deviceId, publishTelemetry()).then(res=>console.log(res)).catch(err=>console.log(err))
-      }, 5000)
+      }, 10000)
 
       const device = await ctx.prisma.device.update({
         where: {
@@ -146,9 +146,13 @@ export const deviceRouter = createTRPCRouter({
           topics: [input.deviceId],
         });
         await admin.disconnect();
-      } else {
-        throw new Error("Device is not active");
       }
+      const deviceToDelete = await ctx.prisma.device.delete({
+        where: {
+          id: Number(input.deviceId),
+        },
+      });
+      return deviceToDelete;
     }
   ),
 
@@ -160,7 +164,8 @@ export const deviceRouter = createTRPCRouter({
           id: Number(input.deviceId),
         },
       });
-      return device;
+      const {interval, ...rest} = device!
+      return rest;
     }
   ),
   getAll: publicProcedure
@@ -170,13 +175,14 @@ export const deviceRouter = createTRPCRouter({
     }
   ),
   create: publicProcedure
-    .input(z.object({ title: z.string(), patient: z.string().optional() }))
+    .input(z.object({ title: z.string(), patient: z.string().optional(), ownerId: z.string() }))
     .mutation(async ({ input, ctx }) => {
       console.log('working')
       const device = await ctx.prisma.device.create({
         data: {
           title: input.title,
           patient: input.patient,
+          ownerId: input.ownerId,
         },
       });
       return device;

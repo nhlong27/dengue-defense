@@ -2,15 +2,12 @@ import React from "react";
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/client/components/ui/alert-dialog";
-import { Separator } from "@radix-ui/react-separator";
 import { Accessibility, Stethoscope } from "lucide-react";
 import { api } from "@/utils/api";
 import { toast } from "./ui/use-toast";

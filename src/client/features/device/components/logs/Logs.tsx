@@ -26,21 +26,18 @@ import { ArrowUpDown, RotateCcw } from "lucide-react";
 import { Button } from "@/client/components/ui/button";
 
 import { DataTablePagination } from "@/client/components/DataTablePagination";
-import { DeviceCreation } from "./DeviceCreation";
-import UponDeletion from "./UponDeletion";
-import UponAssignment from "./UponAssignment";
 import Link from "next/link";
 import { RotatingLines } from "react-loader-spinner";
 import { getQueryKey } from "@trpc/react-query";
 import { useQueryClient } from "@tanstack/react-query";
-import BelongsTo from "./BelongsTo";
 
 export type Device = {
   id: number;
-  title: string;
-  patient: string | null;
-  active: boolean;
-  ownerId: string | null;
+  logged_at: Date;
+  temp: number;
+  spo2: number;
+  HP: number;
+  deviceId: number;
 };
 
 export const columns: ColumnDef<Device>[] = [
@@ -54,7 +51,7 @@ export const columns: ColumnDef<Device>[] = [
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="px-0"
           >
-            Device ID
+            Log ID
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         </div>
@@ -66,76 +63,75 @@ export const columns: ColumnDef<Device>[] = [
     },
   },
   {
-    accessorKey: "title",
+    accessorKey: "logged_at",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Title
+          Logged at
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
     cell: ({ row }) => {
-      const title: string = row.getValue("title");
-      const id: string = row.getValue("id");
+      const logged_at: string = row.getValue("logged_at");
       return (
-        <Link href={`/devices/${id}`} className="text-center font-medium">
-          {title}
-        </Link>
-      );
-    },
-  },
-  {
-    accessorKey: "patient",
-    header: () => <div className="text-center">Assigned patient</div>,
-    cell: ({ row }) => {
-      const patient: string = row.getValue("patient");
-      return <div className="text-center font-medium">{patient}</div>;
-    },
-  },
-  {
-    accessorKey: "active",
-    header: () => <div className="text-center">Status</div>,
-    cell: ({ row }) => {
-      const status: boolean = row.getValue("active");
-      const formatted = status ? "Active" : "Inactive";
-      const style = status ? "default" : "secondary";
-      return (
-        <div className="text-center">
-          <Badge variant={style} className="text-md px-3 py-1">
-            {formatted}
-          </Badge>
+        <div className="text-center font-medium">
+          {(new Date(logged_at)).toLocaleString()}
         </div>
       );
     },
   },
   {
-    accessorKey: "ownerId",
-    header: () => <div className="text-center">Belongs to</div>,
+    accessorKey: "temp",
+    header: () => <div className="text-center">Temperature</div>,
     cell: ({ row }) => {
-      const ownerId: string = row.getValue("ownerId");
-      return <BelongsTo ownerId = {ownerId} />;
+      const temp: string = row.getValue("temp");
+      return <div className="text-center font-medium">{temp}</div>;
     },
   },
   {
-    id: "actions",
+    accessorKey: "spo2",
+    header: () => <div className="text-center">SpO2 Level</div>,
     cell: ({ row }) => {
-      const device = row.original;
-      return (
-        <div className="flex items-center justify-between">
-          <UponAssignment device={device} />
-          <UponDeletion device={device} />
-        </div>
-      );
+      const spo2: string = row.getValue("spo2");
+      return <div className="text-center font-medium">{spo2}</div>;
     },
   },
+  {
+    accessorKey: "HP",
+    header: () => <div className="text-center">Heart Pressure</div>,
+    cell: ({ row }) => {
+      const HP: string = row.getValue("HP");
+      return <div className="text-center font-medium">{HP}</div>;
+    },
+  },
+  {
+    accessorKey: "deviceId",
+    header: () => <div className="text-center">Device ID</div>,
+    cell: ({ row }) => {
+      const deviceId: string = row.getValue("deviceId");
+      return <div className="text-center font-medium">{deviceId}</div>;
+    },
+  },
+  // {
+  //   id: "actions",
+  //   cell: ({ row }) => {
+  //     const device = row.original;
+  //     return (
+  //       <div className="flex items-center justify-between">
+  //         <UponAssignment device={device} />
+  //         <UponDeletion device={device} />
+  //       </div>
+  //     );
+  //   },
+  // },
 ];
 
-export default function DataTable() {
-  const { data } = api.device.getAll.useQuery();
+export default function Logs({deviceId = null} : {deviceId: string | null}) {
+  const { data } = api.log.getByDevice.useQuery({ deviceId: deviceId })
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [shouldRefresh, setShouldRefresh] = React.useState(false);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -164,14 +160,13 @@ export default function DataTable() {
     <div>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter by patient ID..."
-          value={(table.getColumn("patient")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("patient")?.setFilterValue(event.target.value)
+          placeholder="Filter by log ID..."
+          value={(table.getColumn("id")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>{
+            table.getColumn("id")?.setFilterValue(event.target.value)}
           }
           className="max-w-sm"
         />
-        <DeviceCreation />
         <Button variant="secondary" className="ml-8">
           {shouldRefresh ? (
             <RotatingLines strokeColor="#422006" strokeWidth="5" width="20" />

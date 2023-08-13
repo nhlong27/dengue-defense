@@ -6,19 +6,18 @@ import {
 
 export const logRouter = createTRPCRouter({
   getByDevice: publicProcedure
-    .input(z.object({ deviceId: z.string() }))
+    .input(z.object({ deviceId: z.string().nullable() }))
     .query(async ({ input, ctx }) => {
-      const logs = await ctx.prisma.log.findMany({
-        where: {
-          deviceId: Number(input.deviceId),
-        },
-      });
-      return logs;
-    }
-  ),
-  getAll: publicProcedure
-    .query(async ({ ctx }) => {
-      const logs = await ctx.prisma.log.findMany();
+      let logs;
+      if (input.deviceId){
+        logs = await ctx.prisma.log.findMany({
+          where: {
+            deviceId: Number(input.deviceId),
+          },
+        });
+      } else {
+        logs = await ctx.prisma.log.findMany();
+      }
       return logs;
     }
   ),

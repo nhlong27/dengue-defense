@@ -8,13 +8,10 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/client/components/ui/hover-card";
+import { useGetCurrentUserQuery } from "../../hooks/useGetCurrentUserQuery";
 
 const Profile = () => {
-  const { data: session } = useSession();
-  const user = api.user.get.useQuery(
-    { email: session?.user?.email ?? "" },
-    { enabled: !!session?.user?.email }
-  );
+  const user = useGetCurrentUserQuery();
   
   return (
     <div>

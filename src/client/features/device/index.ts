@@ -1,3 +1,4 @@
 import Devices from "./components/Devices";
 import DeviceDetail from "./components/DeviceDetail";
-export {Devices, DeviceDetail}
+import Logs from "./components/logs/Logs";
+export {Devices, DeviceDetail, Logs}

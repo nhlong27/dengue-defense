@@ -16,20 +16,25 @@ import {
 import { api } from "@/utils/api";
 import { type Device } from "./Devices";
 import { type User } from "@prisma/client";
-import { useSession } from "next-auth/react";
+import { useGetCurrentUserQuery } from "../../user";
+import { toast } from "@/client/components/ui/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
+import { RotatingLines } from "react-loader-spinner";
 
 const UponAssignment = ({ device }: { device: Device }) => {
   const getUnassigned = api.user.getUnassigned.useQuery();
-  const {data: session} = useSession();
-  const getUser = api.user.get.useQuery(
-    { email: session?.user?.email ?? "" },
-    { enabled: !!session?.user?.email }
-  );
+  const getUser = useGetCurrentUserQuery();
   const [open, setOpen] = React.useState(false);
   const [selectedPatient, setSelectedPatient] = React.useState<Omit<
     User,
     "password"
   > | null>(null);
+  const deviceKey = getQueryKey(api.device.get, {
+    deviceId: device.id.toString(),
+  });
+  const queryClient = useQueryClient();
+  const assignDevice = api.device.assign.useMutation();
   return getUnassigned.data && getUser.data ? (
     <Popover open={open} onOpenChange={setOpen}>
       {selectedPatient ? (
@@ -37,8 +42,8 @@ const UponAssignment = ({ device }: { device: Device }) => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={()=>{
-              setSelectedPatient(null)
+            onClick={() => {
+              setSelectedPatient(null);
             }}
           >
             Cancel
@@ -46,15 +51,46 @@ const UponAssignment = ({ device }: { device: Device }) => {
           <Button
             variant="default"
             size="sm"
-            // onClick={()=>{
-
-            // }}
+            disabled={!selectedPatient || assignDevice.isLoading}
+            className="flex gap-2"
+            onClick={() => {
+              if (selectedPatient) {
+                assignDevice.mutate(
+                  {
+                    deviceId: device.id.toString(),
+                    patientId: selectedPatient.id.toString(),
+                  },
+                  {
+                    onSuccess: () => {
+                      toast({
+                        title: "Started device!",
+                      });
+                      void queryClient.invalidateQueries(deviceKey);
+                    },
+                    onError: (error) => {
+                      console.log(error);
+                      toast({
+                        title: "Command failed",
+                        description: "Check console for error message",
+                        variant: "destructive",
+                      });
+                    },
+                  }
+                );
+              }
+            }}
           >
             Save
+            {assignDevice.isLoading && (
+              <RotatingLines strokeColor="#422006" strokeWidth="5" width="20" />
+            )}
           </Button>
         </div>
       ) : (
-        <PopoverTrigger disabled={device.ownerId !== getUser.data.id && !device.active } asChild>
+        <PopoverTrigger
+          disabled={device.ownerId !== getUser.data.id && device.active}
+          asChild
+        >
           <Button
             variant="outline"
             size="sm"
@@ -66,7 +102,7 @@ const UponAssignment = ({ device }: { device: Device }) => {
       )}
       <PopoverContent className="p-0" side="right" align="start">
         <Command>
-          <CommandInput placeholder="Assign to..." />
+          <CommandInput placeholder="Unassigned patients:" />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>

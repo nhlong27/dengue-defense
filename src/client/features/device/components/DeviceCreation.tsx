@@ -34,6 +34,7 @@ import {
   SelectValue,
 } from "@/client/components/ui/select";
 import { useRouter } from "next/router";
+import { useGetCurrentUserQuery } from "../../user";
 
 const addDeviceSchema = z.object({
   title: z.string().min(2, { message: "Title must be at least 2 characters." }),
@@ -51,43 +52,46 @@ export function DeviceCreation() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isDone, setIsDone] = React.useState(false);
   const createDevice = api.device.create.useMutation();
+  const getUser = useGetCurrentUserQuery();
   const onSubmit = (data: z.infer<typeof addDeviceSchema>) => {
     setIsSubmitting(true);
-    console.log(data);
-    createDevice.mutate(
-      {
-        title: data.title,
-        patient: data.patient ?? undefined,
-      },
-      {
-        onSuccess: (response) => {
-          toast({
-            title: "Create device successfully!",
-            description: (
-              <div className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                <p className="text-white">
-                  Your device name is <strong>{response.title}</strong>
-                </p>
-              </div>
-            ),
-          });
+    if (getUser.data) {
+      createDevice.mutate(
+        {
+          title: data.title,
+          patient: data.patient ?? undefined,
+          ownerId: getUser.data.id,
+        },
+        {
+          onSuccess: (response) => {
+            toast({
+              title: "Create device successfully!",
+              description: (
+                <div className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+                  <p className="text-white">
+                    Your device name is <strong>{response.title}</strong>
+                  </p>
+                </div>
+              ),
+            });
 
-          setIsSubmitting(false);
-        },
-        onError: (error) => {
-          console.log(error);
-          toast({
-            title: "Create device failed",
-            description: "Check console for error message",
-            variant: "destructive",
-          });
-          setIsSubmitting(false);
-        },
-        onSettled: () => {
-          setIsDone(true);
-        },
-      }
-    );
+            setIsSubmitting(false);
+          },
+          onError: (error) => {
+            console.log(error);
+            toast({
+              title: "Create device failed",
+              description: "Check console for error message",
+              variant: "destructive",
+            });
+            setIsSubmitting(false);
+          },
+          onSettled: () => {
+            setIsDone(true);
+          },
+        }
+      );
+    }
   };
   return (
     <Dialog>
@@ -154,7 +158,12 @@ export function DeviceCreation() {
             <DialogFooter>
               {isDone ? (
                 <DialogTrigger asChild>
-                  <Button className="flex gap-2">Finish</Button>
+                  <Button
+                    onClick={() => setIsDone(false)}
+                    className="flex gap-2"
+                  >
+                    Finish
+                  </Button>
                 </DialogTrigger>
               ) : (
                 <Button

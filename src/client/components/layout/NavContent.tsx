@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "../ui/button";
 import { useRouter } from "next/router";
-import { Calendar, GanttChartSquare, Home, MonitorSmartphone, Users } from "lucide-react";
+import { Calendar, GanttChartSquare, Home, MonitorSmartphone, ScrollText, Users } from "lucide-react";
 
 const NavContent = () => {
   const router = useRouter();
@@ -46,30 +46,30 @@ const NavContent = () => {
         </Button>
         <Button
           onClick={() => {
-            void router.push("/calendar");
+            void router.push("/logs");
           }}
           variant="ghost"
           size="lg"
           className={`flex w-full items-center justify-start gap-3 ${
-            router.query.slug?.[0] === "calendar" ? "bg-accent" : ""
+            router.query.slug?.[0] === "logs" ? "bg-accent" : ""
           }`}
         >
-          <Calendar size={20} /> Calendar
+          <ScrollText size={20} /> Logs
         </Button>
       </div>
       <p className="text-sm font-bold text-stone-300 mt-12 mb-4">Your groups</p>
       <div className="flex w-full flex-col gap-1">
         <Button
           onClick={() => {
-            void router.push("/calendar");
+            void router.push("/group/...");
           }}
           variant="ghost"
           size="lg"
           className={`flex w-full items-center justify-start gap-3 ${
-            router.query.slug?.[0] === "calendar" ? "bg-accent" : ""
+            router.query.slug?.[0] === "group" ? "bg-accent" : ""
           }`}
         >
-          <GanttChartSquare size={20} /> Group 1
+          <GanttChartSquare size={20} /> Group ...
         </Button>
       </div>
     </div>

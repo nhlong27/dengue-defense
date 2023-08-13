@@ -29,6 +29,7 @@ export const userRouter = createTRPCRouter({
           email: input.email,
         },
       });
+      //@ts-ignore
       const {password , ...rest} = user;
       return rest;
     }

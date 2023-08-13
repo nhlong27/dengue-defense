@@ -11,22 +11,23 @@ import Sidebar from "@/client/components/layout/Sidebar";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import OAuthModal from "@/client/components/OAuthModal";
-import { Profile, Users } from "@/client/features/user";
-import { DeviceDetail, Devices } from "@/client/features/device";
+import { Profile, Users, useGetCurrentUserQuery } from "@/client/features/user";
+import { DeviceDetail, Devices, Logs } from "@/client/features/device";
+import { Dashboard } from "@/client/features/dashboard/intex";
 
 export default function Home() {
   const [id, setId] = React.useState<string>("");
-  const getAll = api.device.getAll.useQuery();
-  const start = api.device.start.useMutation();
-  const pause = api.device.pause.useMutation();
-  const remove = api.device.remove.useMutation();
-  const getByDevice = api.log.getByDevice.useQuery(
-    { deviceId: id },
-    { enabled: !!id }
-  );
+  // const getAll = api.device.getAll.useQuery();
+  // const start = api.device.start.useMutation();
+  // const pause = api.device.pause.useMutation();
+  // const remove = api.device.remove.useMutation();
+  // const getByDevice = api.log.getByDevice.useQuery(
+  //   { deviceId: id },
+  //   { enabled: !!id }
+  // );
 
   const router = useRouter();
-  const { data: session } = useSession();
+  const {data: session} = useSession()
   const { data } = api.user.checkIfOAuth.useQuery(
     { email: session?.user?.email ?? "" },
     { enabled: !!session?.user?.email }
@@ -102,7 +103,7 @@ export default function Home() {
       <Sidebar />
       <div className="flex min-h-screen flex-col lg:order-2 lg:grow ">
         <div className="hidden h-16 w-full items-center justify-between px-8 shadow-sm lg:flex">
-          <h1 className="text-lg font-semibold capitalize tracking-wide">
+          <h1 className="text-2xl font-semibold capitalize tracking-wide">
             {router.query.slug?.[0] ? router.query.slug?.[0] : "Dashboard"}
           </h1>
           <ModeToggle />
@@ -119,8 +120,10 @@ export default function Home() {
                 return <Users />;
               case "devices":
                 return <Devices />;
+              case "logs":
+                return <Logs />;
               default:
-                return <div>dfd</div>;
+                return <Dashboard />
             }
           })()}
         </div>
@@ -132,8 +135,8 @@ export default function Home() {
 export const getServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  //@ts-ignore
   const session = await getServerSession(
+    //@ts-ignore
     ...authOptionsWrapper(context.req, context.res)
   );
 
