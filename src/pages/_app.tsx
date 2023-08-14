@@ -17,7 +17,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <Head>
           <title>Dengue Defense</title>
-          <meta name="description" content="Bootstrapped with create-t3-app" />
+          <meta name="description" content="Dengue Defense" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <Toaster />

@@ -1,6 +1,5 @@
 import React from "react";
 import { Drawer } from "vaul";
-import { AlertTriangle } from "lucide-react";
 import { Text } from "@/client/components/ui/text";
 import { Separator } from "@/client/components/ui/separator";
 
@@ -9,10 +8,25 @@ const AccountDrawer = () => {
     <Drawer.Root>
       <Drawer.Trigger asChild>
         <div className="flex items-center gap-4 bg-muted px-4 py-2 rounded-md h-auto">
-          <AlertTriangle size={20} />
+        <svg
+            xmlns='http://www.w3.org/2000/svg'
+            width='24'
+            height='24'
+            viewBox='0 0 24 24'
+            fill='none'
+            stroke='currentColor'
+            strokeWidth='2'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            className='lucide lucide-mouse-pointer-click'
+          >
+            <path d='m9 9 5 12 1.774-5.226L21 14 9 9z' />
+            <path d='m16.071 16.071 4.243 4.243' />
+            <path d='m7.188 2.239.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656-2.12 2.122' />
+          </svg>
           <Text variant="default" className="">
             Sign in with our{" "}
-            <span className="text-accent-foreground">demo accounts</span>{" "}
+            <span className="text-yellow-500 dark:text-yellow-300">demo accounts</span>{" "}
             instead
           </Text>
         </div>
@@ -44,50 +58,52 @@ const AccountDrawer = () => {
                 </div>
                 <Separator className="" />
                 <div className="grid grid-cols-3 p-4 place-items-center ">
-                  <div className="font-medium text-green-500 dark:text-green-300">
+                  <div className="font-medium text-yellow-500 dark:text-yellow-300">
                     patient1@mail.com
                   </div>
-                  <div className="font-medium text-green-500 dark:text-green-300">
+                  <div className="font-medium text-yellow-500 dark:text-yellow-300">
                     patient1
                   </div>
-                  <div className="font-medium text-green-500 dark:text-green-300">
+                  <div className="font-medium text-yellow-500 dark:text-yellow-300">
                     PATIENT
                   </div>
                 </div>
                 <div className="grid grid-cols-3 p-4 place-items-center">
-                  <div className="font-medium text-green-500 dark:text-green-300">
+                  <div className="font-medium text-yellow-500 dark:text-yellow-300">
                     patient2@mail.com
                   </div>
-                  <div className="font-medium text-green-500 dark:text-green-300">
+                  <div className="font-medium text-yellow-500 dark:text-yellow-300">
                     patient2
                   </div>
-                  <div className="font-medium text-green-500 dark:text-green-300">
+                  <div className="font-medium text-yellow-500 dark:text-yellow-300">
                     PATIENT
                   </div>
                 </div>
                 <div className="grid grid-cols-3 p-4 place-items-center">
-                  <div className="font-medium text-green-500 dark:text-green-300">
+                  <div className="font-medium text-yellow-500 dark:text-yellow-300">
                     doctor1@mail.com
                   </div>
-                  <div className="font-medium text-green-500 dark:text-green-300">
+                  <div className="font-medium text-yellow-500 dark:text-yellow-300">
                     doctor1
                   </div>
-                  <div className="font-medium text-green-500 dark:text-green-300">
+                  <div className="font-medium text-yellow-500 dark:text-yellow-300">
                     DOCTOR
                   </div>
                 </div>
                 <div className="grid grid-cols-3 p-4 place-items-center">
-                  <div className="font-medium text-green-500 dark:text-green-300">
+                  <div className="font-medium text-yellow-500 dark:text-yellow-300">
                     doctor2@mail.com
                   </div>
-                  <div className="font-medium text-green-500 dark:text-green-300">
+                  <div className="font-medium text-yellow-500 dark:text-yellow-300">
                     doctor2
                   </div>
-                  <div className="font-medium text-green-500 dark:text-green-300">
+                  <div className="font-medium text-yellow-500 dark:text-yellow-300">
                     DOCTOR
                   </div>
                 </div>
               </div>
+              <h1 className='mx-auto mt-4 text-lg'>Thank you!</h1>
+
             </div>
           </div>
         </Drawer.Content>

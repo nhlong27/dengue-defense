@@ -14,13 +14,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/client/components/ui/sheet";
-import {
-  Github,
-  Linkedin,
-  LogOut,
-  Menu,
-  User,
-} from "lucide-react";
+import { Github, Linkedin, LogOut, Menu, User } from "lucide-react";
 import { ModeToggle } from "../ModeToggle";
 import { signOut } from "next-auth/react";
 import {
@@ -34,6 +28,8 @@ import { toast } from "../ui/use-toast";
 import { useRouter } from "next/router";
 import NavContent from "./NavContent";
 import { useGetCurrentUserQuery } from "@/client/features/user";
+import { helper } from "@/utils/helper";
+import Image from "next/image";
 
 const Nav = () => {
   const router = useRouter();
@@ -48,26 +44,30 @@ const Nav = () => {
           <SheetContent side="left" className="w-[18rem]">
             <SheetHeader>
               <SheetTitle className="h-20">
-                <div className="relative flex h-full w-20 items-center justify-center ">
-                  {/* <Image /> */}
-                  Logo
+                <div className="flex items-center text-lg font-medium text-yellow-500">
+                  <div className="relative mx-3 my-8 flex h-8 w-16 items-center justify-center overflow-hidden rounded-full">
+                    <Image
+                      src={helper.logo}
+                      alt="logo"
+                      className="w-20 object-cover"
+                    />
+                  </div>
+                  Dengue Defense
                 </div>
               </SheetTitle>
             </SheetHeader>
             <NavContent />
           </SheetContent>
         </Sheet>
-        <div className="relative flex h-full w-20 items-center justify-center">
-          {/* <Image /> */}
-          Logo
+        <div className="relative mx-3 flex h-8 w-20 items-center justify-center overflow-hidden rounded-full">
+          <Image src={helper.logo} alt="logo" className="w-20 object-cover" />
         </div>
         <ModeToggle />
         <Menubar className="ml-auto mr-4 rounded-full  border-0 p-0">
           <MenubarMenu>
             <MenubarTrigger className="flex  w-full gap-3 rounded-full py-0 pl-4 pr-0">
               <span className="hidden sm:block">
-
-              {user.data.name ?? user.data.email}
+                {user.data.name ?? user.data.email}
               </span>
               <Avatar>
                 <AvatarImage src="" />
@@ -128,10 +128,13 @@ const Nav = () => {
         </Menubar>
       </nav>
       <nav className="hidden max-h-screen w-full lg:sticky lg:bottom-0 lg:top-0 lg:flex lg:flex-col">
-        <div className="relative flex h-20 w-full items-center justify-start">
-          {/* <Image /> */}
-          Logo
+        <div className="flex items-center text-lg font-medium text-yellow-500">
+          <div className="relative mx-3 my-8 flex h-8 w-16 items-center justify-center overflow-hidden rounded-full">
+            <Image src={helper.logo} alt="logo" className="w-20 object-cover" />
+          </div>
+          Dengue Defense
         </div>
+
         <NavContent />
         <Menubar className="mb-16 mr-auto mt-auto w-full rounded-full border-0 p-0">
           <MenubarMenu>
