@@ -63,10 +63,11 @@ Official website: <a href="https://dengue-defense.vercel.app/" target='_blank'>h
 ## About the project
 
 [![Product Preview][product-preview]](...url)
+Originally an application integrated with IoT devices for awareness and preventive measures, this is the refactored version of my thesis project built on Nextjs. This project encompasses frontend and backend development, designing a user-friendly interface with data visualization components, establishing APIs for IoT device communication, and configuring a database to store and retrieve information.
 
- Originally an application integrated with IoT devices, this is the refactored version of my thesis project built on Nextjs. My exploration of TRPC and type-safe APIs has equipped me with a solid grasp of efficient communication protocols. I've also attempted session-based authentication, enhancing my knowledge of security measures. 
- 
- This project has deepened my understanding of pub/sub mechanisms and their contextual applications. The implementation of polling mechanisms to interact with Kafka has given me practical experience in data collection strategies, while integrating a time series database for telemetry storage has honed my skills in data management. 
+This project has further deepened my understanding of pub/sub mechanisms and their contextual applications. The incorporation of polling mechanisms to interact with Kafka has granted me practical experience in data collection strategies. Simultaneously, the integration of a time series database for telemetry storage has honed my skills in data management.
+
+My exploration of TRPC and type-safe APIs has also equipped me with a solid grasp of efficient communication protocols. I've also attempted session-based authentication, enhancing my knowledge of security measures.
  
  <!-- Finally, deploying the application to an EC2 instance has broadened my understanding of cloud infrastructure and deployment procedures. -->
 
