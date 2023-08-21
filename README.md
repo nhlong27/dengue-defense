@@ -74,7 +74,7 @@ My exploration of TRPC and type-safe APIs has also equipped me with a solid gras
 <a id='duration'></a>
 ## Duration
 
-June - July 2023 
+August 2023 
 ## Application flow  
 <!-- <b>Note</b>: media = movie | TV shows -->
 <ul>
